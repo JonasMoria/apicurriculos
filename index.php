@@ -1,14 +1,11 @@
 <?php
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, DELETE, UPDATE");
+header('Content-Type: application/json; charset=utf-8');
 
 require_once 'vendor/autoload.php';
+require_once 'env.php';
+require_once 'src/slimConfiguration.php';
 
-$app = new \Slim\App();
-
-$app->get('/', function (Request $request, Response $response, array $args) {
-    $response->getBody()->write('API Currículos v0.1 beta');
-});
-
-$app->run();
+require_once('routes/routes.php');
