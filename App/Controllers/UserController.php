@@ -44,4 +44,13 @@ class UserController {
 
         return $response;
     }
+
+    public function newCurriculum(Request $request, Response $response, array $arg) : Response {
+        $user = $this->model;
+        $params = $request->getParsedBody();
+
+        $response->getBody()->write(json_encode($params));
+        
+        return $response;
+    }
 }
