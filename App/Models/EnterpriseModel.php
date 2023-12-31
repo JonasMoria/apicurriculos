@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\DAO\UserDAO;
+use App\DAO\EnterpriseDAO;
 use InvalidArgumentException;
 
-class UserModel {
+class EnterpriseModel {
     private string $name;
     private string $email;
     private string $password;
@@ -13,7 +13,7 @@ class UserModel {
     private $DAO;
 
     public function __construct() {
-        $this->DAO = new UserDAO();
+        $this->DAO = new EnterpriseDAO();
     }
 
     public function setName(string $name) {
@@ -53,4 +53,5 @@ class UserModel {
             throw new InvalidArgumentException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde');
         }
     }
+
 }

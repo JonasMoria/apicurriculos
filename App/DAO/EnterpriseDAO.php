@@ -2,28 +2,28 @@
 
 namespace App\DAO;
 
+use App\Models\EnterpriseModel;
 use App\Models\Security;
-use App\Models\UserModel;
 use InvalidArgumentException;
 
-class UserDAO {
+class EnterpriseDAO {
     private $database;
-    const TABLE = 'users';
+    const TABLE = 'enterprises';
 
     public function __construct() {
         $this->database = new Database();
     }
 
-    public function executeInsert(UserModel $user) {
+    public function executeInsert(EnterpriseModel $enterprise) {
         $dbase = $this->database;
 
-        $name = $dbase->scapeString($user->getName());
-        $email = $dbase->scapeString($user->getEmail());
-        $pass = $dbase->scapeString($user->getPassword());
+        $name = $dbase->scapeString($enterprise->getName());
+        $email = $dbase->scapeString($enterprise->getEmail());
+        $pass = $dbase->scapeString($enterprise->getPassword());
         $pass = Security::convertToSha512($pass);
 
-        if (self::getUserByEmail($email)) {
-            throw new InvalidArgumentException('Usuário já cadastrado');
+        if (self::getEnterpriseByEmail($email)) {
+            throw new InvalidArgumentException('Empresa já cadastrada');
         }
 
         $query = "
@@ -36,21 +36,20 @@ class UserDAO {
         return $dbase->executeQuery($query);
     }
 
-    public function getUserByEmail($email) {
+    public function getEnterpriseByEmail($email) {
         $dbase = $this->database;
 
         $userEmail = $dbase->scapeString($email);
 
         $query = "
             SELECT
-                U.id
+                E.id
             FROM
-                " . self::TABLE . " U
+                " . self::TABLE . " E
             WHERE
                 email = '" . $userEmail . "'
         ";
 
         return $dbase->fetchAssoc($query);
     }
-
 }
