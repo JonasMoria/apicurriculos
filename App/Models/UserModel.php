@@ -53,4 +53,20 @@ class UserModel {
             throw new InvalidArgumentException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde');
         }
     }
+
+    public function getArrayPersonsAuth() {
+        $dao = $this->DAO;
+        $users = $dao->getPersonsToAuth();
+
+        $arrayUsers = [];
+        foreach ($users as $user) {
+            $arrayUsers += [
+                $user['email'] => $user['pass']
+            ];
+        }
+
+        $array['users'] = $arrayUsers;
+
+        return $array;
+    }
 }

@@ -2,14 +2,16 @@
 
 namespace App\Middlewares;
 
+use App\Models\UserModel;
 use Tuupola\Middleware\HttpBasicAuthentication;
 
 class basicAuth {
+    /**
+     * Método para autenticar usuários
+     */
     public static function authPerson() : HttpBasicAuthentication {
-        return new HttpBasicAuthentication([
-            'users' => [
-                'root' => '123'
-            ]
-        ]);
+        $userModel = new UserModel();
+
+        return new HttpBasicAuthentication($userModel->getArrayPersonsAuth());
     }
 }

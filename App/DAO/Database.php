@@ -31,7 +31,7 @@ class Database {
     }
 
     public function fetchAll($query) {
-        return mysqli_fetch_all(self::executeQuery($query));
+        return mysqli_fetch_all(self::executeQuery($query), MYSQLI_ASSOC);
     }
 
     public function scapeString($string) {

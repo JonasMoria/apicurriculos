@@ -53,4 +53,20 @@ class UserDAO {
         return $dbase->fetchAssoc($query);
     }
 
+    public function getPersonsToAuth() {
+        $dbase = $this->database;
+
+        $query = "
+            SELECT
+                U.email,
+                U.pass
+            FROM
+                " . self::TABLE . " U
+            WHERE
+                U.status = '1'
+        ";
+
+        return $dbase->fetchAll($query);
+    }
+
 }
