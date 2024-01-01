@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\AppController;
+use App\Controllers\CurriculumController;
 use App\Controllers\EnterpriseController;
 use App\Controllers\UserController;
 use App\Middlewares\basicAuth;
@@ -16,7 +17,7 @@ $app->post('/register/enterprise', EnterpriseController::class . ':InsertNewEnte
 
 // person routes with authentication
 $app->group('', function() use ($app) {
-   $app->post('/person/curriculum/new', UserController::class . ':newCurriculum');
+   $app->post('/person/curriculum/new', CurriculumController::class . ':newCurriculum');
 
 })->add(basicAuth::authPerson());
 

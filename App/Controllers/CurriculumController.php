@@ -2,35 +2,32 @@
 
 namespace App\Controllers;
 
+use App\Models\CurriculumModel;
 use App\Models\Http;
-use App\Models\Security;
-use App\Models\UserModel;
 use Exception;
 use InvalidArgumentException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class UserController {
+class CurriculumController {
     private $model;
 
+    /**Máximo  de currículos por pessoa */
+    const MAX_CURRICULUM = 3;
+
     public function __construct() {
-        $this->model = new UserModel();
+        $this->model = new CurriculumModel();
     }
 
-    public function InsertNewUser(Request $request, Response $response, array $arg) : Response {
-        $user = $this->model;
+    public function newCurriculum(Request $request, Response $response, array $arg) : Response {
+        $curriculum = $this->model;
         $params = $request->getParsedBody();
 
         try {
 
-            $user->setName(Security::sanitizeString($params['name']));
-            $user->setEmail(Security::sanitizeEmail($params['email']));
-            $user->setPassword($params['password']);
+            $json = Http::obtainJsonSuccess('Currículo cadastrado com sucesso');
 
-            $user->insert($user);
-            $json = Http::obtainJsonSuccess('Usuário cadastrado com sucesso');
-
-            $response->getBody()->write($json);
+            $response->getBody()->write(json_encode($params));
             
         } catch (InvalidArgumentException $error) {
             $response->getBody()->write(
@@ -41,7 +38,7 @@ class UserController {
                 Http::obtainJsonError($error->getMessage())
             );
         }
-
+        
         return $response;
     }
 }

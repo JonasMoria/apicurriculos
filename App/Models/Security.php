@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use InvalidArgumentException;
 
 class Security {
@@ -50,4 +51,24 @@ class Security {
             throw new InvalidArgumentException('Senha Inválida. Verifique se: Tem mais de 6 caracteres, letras maiúsculas e minúsculas e números');
         }
     }
+
+    public static function validadeCity(string $city) {
+        if (strlen($city) < 3 || strlen($city) > 256) {
+            throw new InvalidArgumentException('Campo Cidade do usuário inválido');
+        }
+    }
+
+    public static function validateUF(string $UF) {
+        if (strlen($UF) != 2) {
+            throw new InvalidArgumentException('Campo UF do usuário inválido');
+        }
+    }
+
+    public static function validadePersonName(string $name) {
+        throw new InvalidArgumentException('Campo Nome do usuário deve ser composto por no mínimo nome e sobrenome');
+    }
+
+    public static function validateDate(DateTime $date) {
+        throw new InvalidArgumentException('Campo Data de Nascimento do usuário do usuário inválida');
+    } 
 }

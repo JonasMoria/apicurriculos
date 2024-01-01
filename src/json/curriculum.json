@@ -1,0 +1,60 @@
+{
+    "personal_info": {
+        "name": "Fulano Silva",
+        "city": "São José dos Campos",
+        "uf" : "SP",
+        "birthdate": "2002-10-10",
+        "description" : "Fascinado por tecnologia e programação!"
+    },
+
+    "personal_contact" : {
+        "email": "fulano@gmail.com",
+        "phones" : {
+            "principal" : "(12) 988689254",
+            "secondary" : "(12) 39571564"
+        },
+        "social_networks" : {
+            "linkedIn" : "https://linkedin.com.br/fulano",
+            "facebook" : "https://facebook.com.br/fulano",
+            "instagram" : "https://instagram.com.br/fulano"
+        }
+    },
+    "personal_education" : {
+        "ADS" : {
+            "course_name" : "Analise e Desenvolvimento de Sistemas",
+            "course_modality" : "Tecnólogo",
+            "institution" : "FATEC",
+            "status" : "Completo",
+            "init" : "2020-02-10",
+            "finish" : "2022-12-10"
+        },
+        "ADM" : {
+            "course_name" : "Administração",
+            "course_modality" : "Técnico",
+            "institution" : "ETEC",
+            "status" : "Incompleto",
+            "init" : "2019-02-10",
+            "finish" : "2019-12-10"
+        }
+    },
+    "personal_skills" : [
+        "Adaptabilidade", "Aprendizado", "foco"
+    ],
+    "personal_languages" : [
+        "Inglês", "Espanhol", "Alemão"
+    ],
+    "personal_experience" : {
+        "Google" : {
+            "office" : "Estagiário",
+            "init" : "2022-02-10",
+            "finish" : "2022-12-10",
+            "activities" : "suporte ao usuário"
+        },
+        "Facebook" : {
+            "office" : "Programador Fullstack Junior",
+            "init" : "2022-10-19",
+            "finish" : "",
+            "activities" : "dev"
+        }
+    }
+}

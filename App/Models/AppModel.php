@@ -19,6 +19,10 @@ class AppModel {
 
         $infoApp['routes'] = [
             'app_informations' => '/',
+            'app_register_person' => '/register/person',
+            'app_register_enterprise' => '/register/entrerprise',
+
+            'app_register_curriculum' => '/person/curriculum/new'
         ];
 
         $infoApp['dev_owner'] = 'Jonas Moriá';
