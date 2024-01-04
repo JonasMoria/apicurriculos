@@ -13,6 +13,7 @@ class CurriculumModel {
     private string $personCity;
     private string $personUF;
     private DateTime $personBirthDate;
+    private string $personDescription;
 
     private array $personPhones;
     private array $personSocialNetworks;
@@ -28,7 +29,7 @@ class CurriculumModel {
     }
 
     public function setPersonID(string $personID) {
-        if (empty($personID) || $personID < 0) {
+        if ($personID < 0) {
             throw new InvalidArgumentException('Campo ID do usuário obrigatório');
         }
 
@@ -36,7 +37,7 @@ class CurriculumModel {
     }
 
     public function setPersonName(string $personName) {
-        Security::validadePersonName($personName);
+        Security::validatePersonName($personName);
 
         $this->personName = $personName;
     }
@@ -48,7 +49,7 @@ class CurriculumModel {
     }
 
     public function setPersonCity(string $personCity) {
-        Security::validadeCity($personCity);
+        Security::validateCity($personCity);
 
         $this->personCity = $personCity;
     }
@@ -90,6 +91,12 @@ class CurriculumModel {
         $this->personBirthDate = $personBirthDate;
     }
 
+    public function setPersonDescription(string $personDescription) {
+        Security::validatePersonDescription($personDescription);
+
+        $this->$personDescription = $personDescription;
+    }
+
     public function getPersonID() {
         return $this->personID;
     }
@@ -112,6 +119,10 @@ class CurriculumModel {
 
     public function getPersonBirthDate() {
         return $this->personBirthDate;
+    }
+
+    public function getPersonDescription() {
+        return $this->personDescription;
     }
 
     public function getPersonPhones() {

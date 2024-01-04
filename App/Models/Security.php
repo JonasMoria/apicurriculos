@@ -31,6 +31,10 @@ class Security {
         }
     }
 
+    public static function removeDoubleSpace($string) {
+        return preg_replace('/\\s\\s+/', ' ', $string);
+    }
+
     public static function validateEmail(string $email) {
         if (empty($email)) {
             throw new InvalidArgumentException('Email não pode ser vazio!');
@@ -52,7 +56,7 @@ class Security {
         }
     }
 
-    public static function validadeCity(string $city) {
+    public static function validateCity(string $city) {
         if (strlen($city) < 3 || strlen($city) > 256) {
             throw new InvalidArgumentException('Campo Cidade do usuário inválido');
         }
@@ -64,11 +68,34 @@ class Security {
         }
     }
 
-    public static function validadePersonName(string $name) {
-        throw new InvalidArgumentException('Campo Nome do usuário deve ser composto por no mínimo nome e sobrenome');
+    public static function validatePersonName(string $name) {
+        $regex = "/^[A-ZÀ-Ÿ][A-zÀ-ÿ']+\s([A-zÀ-ÿ']\s?)*[A-ZÀ-Ÿ][A-zÀ-ÿ']+$/";
+    
+        if (!preg_match($regex, $name)) {
+            throw new InvalidArgumentException('Campo Nome do usuário deve ser composto por no mínimo nome e sobrenome');
+        }
+    }
+
+    public static function validatePersonDescription(string $description) {
+        if (strlen($description) > 300) {
+            throw new InvalidArgumentException('Campo Descrição do usuário deve ser composto de no máximo 300 caracteres');
+        }
+    }
+
+    public static function fixName($name) {
+        return mb_convert_case($name, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    public static function formatDate($date) {
+        return new DateTime($date);
     }
 
     public static function validateDate(DateTime $date) {
-        throw new InvalidArgumentException('Campo Data de Nascimento do usuário do usuário inválida');
+        $dateNow = new DateTime();
+
+        if ($dateNow < $date) {
+            throw new InvalidArgumentException('Campo Data de Nascimento do usuário inválida');
+        }
+
     } 
 }
