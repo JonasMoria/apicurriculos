@@ -61,29 +61,86 @@ class CurriculumModel {
     }
 
     public function setPersonPhones (array $personPhones) {
+        Security::validatePhone($personPhones['principal']);
+        if (!empty($personPhones['secondary'])) {
+            Security::validatePhone($personPhones['secondary']);
+        }
+
         $this->personPhones = $personPhones;
     }
 
     public function setPersonSocialNetworks (array $personSocialNetworks) {
-        $this->personSocialNetworks = $personSocialNetworks;
+        foreach ($personSocialNetworks as $social => $link) {
+            if ($link) {
+                Security::validateLink($link, $social);
+            }
+        }
+
+        if (!empty($personSocialNetworks)) {
+            $this->personSocialNetworks = $personSocialNetworks;
+        } else {
+            $this->personSocialNetworks = [];
+        }
     }
 
     public function setPersonEducation (array $personEducation) {
-        $this-> personEducation= $personEducation;
+        foreach ($personEducation as $course => $courseInfo) {
+            if ($course) {
+                Security::validateEmpty($courseInfo['course_name'], 'nome do curso');
+                Security::validateEmpty($courseInfo['course_modality'], 'modalidade');
+                Security::validateEmpty($courseInfo['institution'], 'instituição');
+                Security::validateEmpty($courseInfo['status'], 'status');
+                Security::validateDateEmpty(Security::formatDate($courseInfo['init']), 'curso - início');
+                Security::validateDateEmpty(Security::formatDate($courseInfo['finish']), 'curso - fim');
+            }
+        }
+
+        if (!empty($personEducation)) {
+            $this-> personEducation = $personEducation;
+        } else {
+            $this-> personEducation = [];
+        }
     }
 
     public function setPersonSkills (array $personSkills) {
-        $this->personSkills = $personSkills;
+        foreach ($personSkills as $key => $skill) {
+            $personSkills[$key] = Security::sanitizeString($skill);
+        }
+
+        if (!empty($personSkills)) {
+            $this->personSkills = $personSkills;
+        } else {
+            $this->personSkills = [];
+        }
     }
 
     public function setPersonLanguages (array $personLanguages) {
-        $this->personLanguages = $personLanguages;
+        foreach ($personLanguages as $key => $lang) {
+            $personLanguages[$key] = Security::sanitizeString($lang);
+        }
+
+        if (!empty($personLanguages)) {
+            $this->personLanguages = $personLanguages;
+        } else {
+            $this->personLanguages = [];
+        }
     }
 
     public function setPersonExperiences (array $personExperiences) {
-        $this->personExperiences = $personExperiences;
+        foreach ($personExperiences as $enterprise => $info) {
+            if ($enterprise) {
+                Security::validateEmpty($info['office'], 'cargo');
+                Security::validateDateEmpty(Security::formatDate($info['init']), 'emprego - inicio');
+                Security::validateDateEmpty(Security::formatDate($info['finish']), 'emprego - término');
+                Security::validateEmpty($info['activities'], 'atividades');
+            }
+        }
+        if (!empty($personExperiences)) {
+            $this->personExperiences = $personExperiences;
+        } else {
+            $this->personExperiences = [];
+        }
     }
-
 
     public function setPersonBirthDate(DateTime $personBirthDate) {
         Security::validateDate($personBirthDate);
@@ -147,5 +204,9 @@ class CurriculumModel {
 
     public function getPersonExperiences() {
         return $this->personExperiences;
+    }
+
+    public function insert(CurriculumModel $curriculum) {
+        var_dump($curriculum);
     }
 }

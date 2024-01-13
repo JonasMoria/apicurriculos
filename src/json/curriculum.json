@@ -16,7 +16,8 @@
         "social_networks" : {
             "linkedIn" : "https://linkedin.com.br/fulano",
             "facebook" : "https://facebook.com.br/fulano",
-            "instagram" : "https://instagram.com.br/fulano"
+            "instagram" : "https://instagram.com.br/fulano",
+            "site" : "https://fulano.com.br"
         }
     },
     "personal_education" : {

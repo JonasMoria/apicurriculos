@@ -22,6 +22,10 @@ class Security {
         return hash('sha512', $string);
     }
 
+    public static function validateURL($url) {
+        return filter_var($url, FILTER_VALIDATE_URL);
+    }
+
     public static function validateName(string $name) {
         if (empty($name)) {
             throw new InvalidArgumentException('Nome não pode ser vazio!');
@@ -51,7 +55,7 @@ class Security {
         if (empty($password)) {
             throw new InvalidArgumentException('Senha não pode ser vazia!');
         }
-        if (!Security::validatePassword($password)) {
+        if (!self::validatePassword($password)) {
             throw new InvalidArgumentException('Senha Inválida. Verifique se: Tem mais de 6 caracteres, letras maiúsculas e minúsculas e números');
         }
     }
@@ -90,12 +94,47 @@ class Security {
         return new DateTime($date);
     }
 
+    public static function validateDateEmpty(Datetime $date, string $field) {
+        $dateNow = new DateTime();
+
+        if ($dateNow < $date) {
+            throw new InvalidArgumentException('Campo ' . htmlspecialchars($field) .  ' inválido');
+        }
+    }
+
     public static function validateDate(DateTime $date) {
         $dateNow = new DateTime();
 
         if ($dateNow < $date) {
             throw new InvalidArgumentException('Campo Data de Nascimento do usuário inválida');
         }
+    }
 
-    } 
+    public static function validatePhone(string $phone) {
+        if (!is_numeric($phone)) {
+            throw new InvalidArgumentException('Campo Telefone do usuário inválido');
+        }
+
+        if (strlen($phone) != 13) {
+            if (strlen($phone) != 12) {
+                throw new InvalidArgumentException('Campo Telefone do usuário inválido');
+            }
+        }
+    }
+
+    public static function validateLink(string $link, string $fieldName = '') {
+        if (!self::validateURL($link)) {
+            if ($fieldName != '') {
+                throw new InvalidArgumentException('Campo redes sociais - ' . htmlspecialchars($fieldName) . ' inválido');
+            } else {
+                throw new InvalidArgumentException('Link inválido');
+            }
+        }
+    }
+
+    public static function validateEmpty($field, $fieldName) {
+        if (empty($field)) {
+            throw new InvalidArgumentException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
+        }
+    }
 }

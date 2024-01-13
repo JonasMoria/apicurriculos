@@ -51,6 +51,7 @@ class CurriculumController {
             $personalExperience = $params['personal_experience'];
             $curriculum->setPersonExperiences($personalExperience);
 
+            $curriculum->insert($curriculum);
             $json = Http::obtainJsonSuccess('Currículo cadastrado com sucesso');
 
             $response->getBody()->write($json);
