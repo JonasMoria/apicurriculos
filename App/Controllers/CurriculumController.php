@@ -27,6 +27,8 @@ class CurriculumController {
 
         try {
 
+            $curriculum->setPersonId($_SESSION['user_id']);
+
             $curriculum->setCurriculumName(Security::removeDoubleSpace($params['curriculum_name']));
 
             $personalInfo = $params['personal_info'];

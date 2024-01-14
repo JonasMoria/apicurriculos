@@ -56,16 +56,17 @@ class UserModel {
 
     public function getArrayPersonsAuth(string $user, string $pass512) {
         $dao = $this->DAO;
-        $users = $dao->getPersonsToAuth($user, $pass512);
+        $user = $dao->getPersonsToAuth($user, $pass512);
 
-        $arrayUsers = [];
-        foreach ($users as $user) {
-            $arrayUsers += [
-                $user['email'] => $user['pass']
-            ];
+        if (!empty($user)) {
+            $_SESSION['user_id'] = $user['id'];
         }
 
-        $array['users'] = $arrayUsers;
+        $arrayUser = [
+            $user['email'] => $user['pass']
+        ];
+
+        $array['users'] = $arrayUser;
 
         return $array;
     }

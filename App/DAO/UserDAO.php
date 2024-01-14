@@ -61,6 +61,7 @@ class UserDAO {
 
         $query = "
             SELECT
+                U.id,
                 U.email,
                 U.pass
             FROM
@@ -72,7 +73,7 @@ class UserDAO {
             LIMIT 1
         ";
 
-        return $dbase->fetchAll($query);
+        return $dbase->fetchAssoc($query);
     }
 
 }

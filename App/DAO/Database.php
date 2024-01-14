@@ -37,4 +37,30 @@ class Database {
     public function scapeString($string) {
         return mysqli_real_escape_string(self::connectionDB(), $string);
     }
+
+    public function getLastInsertId($query) {
+        $connection = self::connectionDB();
+        mysqli_query($connection, $query);
+
+        return mysqli_insert_id($connection);
+    }
+
+    public function insertWithArray(string $table, array $array) {
+        $fields =  [];
+        $values = [];
+
+        foreach ($array as $column => $value) {
+            array_push($fields, self::scapeString("`{$column}`"));
+            array_push($values, "'" . self::scapeString($value) . "'");
+        }
+        
+        $query = "
+            INSERT INTO " . self::scapeString($table) . "
+                (" . implode(',', $fields) . ")
+            VALUES
+                (" .implode(',', $values) . ")
+        ";
+
+        return self::getLastInsertId($query);
+    }
 }

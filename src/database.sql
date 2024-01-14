@@ -51,6 +51,7 @@ CREATE TABLE `users_personal_infos` (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	curriculum_id INT UNSIGNED NOT NULL,
     person_name VARCHAR(256) NOT NULL,
+	person_email VARCHAR(256) NOT NULL,
     person_city VARCHAR(256) NOT NULL,
     person_uf VARCHAR(2) NOT NULL,
     person_birth DATE NOT NULL,

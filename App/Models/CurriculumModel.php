@@ -96,7 +96,7 @@ class CurriculumModel {
                 Security::validateEmpty($courseInfo['course_name'], 'nome do curso');
                 Security::validateEmpty($courseInfo['course_modality'], 'modalidade');
                 Security::validateEmpty($courseInfo['institution'], 'instituição');
-                Security::validateEmpty($courseInfo['status'], 'status');
+                Security::validateNumber($courseInfo['status'], 'status');
                 Security::validateDateEmpty(Security::formatDate($courseInfo['init']), 'curso - início');
                 Security::validateDateEmpty(Security::formatDate($courseInfo['finish']), 'curso - fim');
             }
@@ -158,7 +158,7 @@ class CurriculumModel {
     public function setPersonDescription(string $personDescription) {
         Security::validatePersonDescription($personDescription);
 
-        $this->$personDescription = $personDescription;
+        $this->personDescription = $personDescription;
     }
 
     public function getPersonID() {
@@ -218,6 +218,100 @@ class CurriculumModel {
     }
 
     public function insert(CurriculumModel $curriculum) {
-        var_dump($curriculum);
+        $dao = $this->DAO;
+
+        $curriculumData['user_id'] = $curriculum->getPersonID();
+        $curriculumData['cv_name'] = $curriculum->getCurriculumName();
+
+        $idCurriculum = $dao->createCurriculum($curriculumData);
+        if (!$idCurriculum) {
+            throw new InvalidArgumentException('Não foi possível criar o currículo');
+        }
+
+        $personalInfo['curriculum_id'] = $idCurriculum;
+        $personalInfo['person_name'] = $curriculum->getPersonName();
+        $personalInfo['person_city'] = $curriculum->getPersonCity();
+        $personalInfo['person_uf'] =  $curriculum->getPersonUF();
+        $personalInfo['person_email'] = $curriculum->getPersonEmail();
+        $personalInfo['person_birth'] = Security::convertDateToString($curriculum->getPersonBirthDate());
+        $personalInfo['person_desc'] = $curriculum->getPersonDescription();
+
+        $idPersonalInfo = $dao->insertPersonalInfo($personalInfo);
+        if (!$idPersonalInfo) {
+            throw new InvalidArgumentException('Não foi possível inserir as informações pessoais');
+        }
+
+        $phones = $curriculum->getPersonPhones();
+        $socialNetworks = $curriculum->getPersonSocialNetworks();
+        $personalContact['curriculum_id'] = $idCurriculum;
+        $personalContact['person_phone_principal'] = $phones['principal'];
+        $personalContact['person_phone_secondary'] = $phones['secondary'];
+        $personalContact['person_linkedin'] = $socialNetworks['linkedIn'];
+        $personalContact['person_facebook'] = $socialNetworks['facebook'];
+        $personalContact['person_instragram'] = $socialNetworks['instagram'];
+        $personalContact['person_site'] = $socialNetworks['site'];
+
+        $idPersonalContact = $dao->insertPersonalContact($personalContact);
+        if (!$idPersonalContact) {
+            throw new InvalidArgumentException('Não foi possível inserir as informações de contato');
+        }
+
+        $personalEducations = $curriculum->getPersonEducation();
+        foreach ($personalEducations as $acronym => $infos) {
+            $education = [];
+            $education['curriculum_id'] = $idCurriculum;
+            $education['person_course_acronym'] =  $acronym;
+            $education['person_course_name'] = $infos['course_name'];
+            $education['person_course_modality'] = $infos['course_modality'];
+            $education['person_course_institution'] = $infos['institution'];
+            $education['person_course_status'] = $infos['status'];
+            $education['person_course_init'] = $infos['init'];
+            $education['person_course_finish'] = $infos['finish'];
+
+            $idPersonalEducation = $dao->insertPersonalEducation($education);
+            if (!$idPersonalContact) {
+                throw new InvalidArgumentException('Não foi possível inserir as informações de educação');
+            }
+        }
+
+        $personalExperiences = $curriculum->getPersonExperiences();
+        foreach ($personalExperiences as $enterprise => $jobInfo) {
+            $job = [];
+            $job['curriculum_id'] = $idCurriculum;
+            $job['person_experience_enterprise'] = $enterprise;
+            $job['person_experience_office'] = $jobInfo['office'];
+            $job['person_experience_activities'] = $jobInfo['activities'];
+            $job['person_experience_init'] = $jobInfo['init'];
+            $job['person_experience_finish'] = $jobInfo['finish'];
+
+            $idPersonalExperience = $dao->insertPersonalExperience($job);
+            if (!$idPersonalExperience) {
+                throw new InvalidArgumentException('Não foi possível inserir as informações de experiência');
+            }
+        }
+
+        $personalSkills = $curriculum->getPersonSkills();
+        foreach ($personalSkills as $key => $skill) {
+            $skillDB = [];
+            $skillDB['curriculum_id'] = $idCurriculum;
+            $skillDB['person_skill_name'] = $skill;
+
+            $idPersonalSkills = $dao->insertPersonalSkills($skillDB);
+            if (!$idPersonalSkills) {
+                throw new InvalidArgumentException('Não foi possível inserir as informações de habilidades');
+            }
+        }
+
+        $personalLangs = $curriculum->getPersonLanguages();
+        foreach ($personalLangs as $key => $lang) {
+            $langDB = [];
+            $langDB['curriculum_id'] = $idCurriculum;
+            $langDB['person_lang_name'] = $lang;
+
+            $idPersonalLangs = $dao->insertPersonalLangs($langDB);
+            if (!$idPersonalLangs) {
+                throw new InvalidArgumentException('Não foi possível inserir as informações de linguagens');
+            }
+        }
     }
 }

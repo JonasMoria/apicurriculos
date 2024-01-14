@@ -8,6 +8,8 @@ use App\Middlewares\basicAuth;
 
 use function src\slimConfiguration;
 
+session_start();
+
 $app = new \Slim\App(slimConfiguration());
 
 $app->get('/', AppController::class . ':getAboutApp');

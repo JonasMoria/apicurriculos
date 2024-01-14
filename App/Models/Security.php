@@ -137,4 +137,14 @@ class Security {
             throw new InvalidArgumentException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
         }
     }
+
+    public static function validateNumber($num, $fieldName) {
+        if (!is_numeric($num) || $num < 0) {
+            throw new InvalidArgumentException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
+        }
+    }
+
+    public static function convertDateToString(Datetime $date) {
+        return date_format($date, 'Y-m-d');
+    }
 }
