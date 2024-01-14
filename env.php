@@ -6,7 +6,7 @@ putenv('DISPLAY_ERRORS_DETAILS=' . ENABLE_SHOW_ERRORS);
 
 // Conect to database
 const HOST = 'localhost';
-const NAME = 'apicurriculos';
+const NAME = 'apicurriculums';
 const USER = 'root';
 const PASS = '';
 const PORT = '3306';

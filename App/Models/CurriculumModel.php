@@ -8,6 +8,7 @@ use InvalidArgumentException;
 
 class CurriculumModel {
     private string $personID;
+    private string $curriculumName;
     private string $personName;
     private string $personEmail;
     private string $personCity;
@@ -34,6 +35,12 @@ class CurriculumModel {
         }
 
         $this->personID = $personID;
+    }
+
+    public function setCurriculumName(string $curriculumName) {
+        Security::validateName($curriculumName);
+
+        $this->curriculumName = $curriculumName;
     }
 
     public function setPersonName(string $personName) {
@@ -156,6 +163,10 @@ class CurriculumModel {
 
     public function getPersonID() {
         return $this->personID;
+    }
+
+    public function getCurriculumName() {
+        return $this->curriculumName;
     }
 
     public function getPersonName() {

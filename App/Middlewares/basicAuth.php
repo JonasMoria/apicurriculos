@@ -12,8 +12,13 @@ class basicAuth {
     public static function authPerson() : HttpBasicAuthentication {
         $userModel = new UserModel();
 
-        $user = $_SERVER['PHP_AUTH_USER'];
-        $pass512 = $_SERVER['PHP_AUTH_PW'];
+        if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+            $user = $_SERVER['PHP_AUTH_USER'];
+            $pass512 = $_SERVER['PHP_AUTH_PW'];
+        } else {
+            $user = '';
+            $pass512 = '';
+        }
 
         return new HttpBasicAuthentication($userModel->getArrayPersonsAuth($user, $pass512));
     }

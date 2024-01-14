@@ -12,12 +12,14 @@ $app = new \Slim\App(slimConfiguration());
 
 $app->get('/', AppController::class . ':getAboutApp');
 
-$app->post('/register/person', UserController::class . ':InsertNewUser');
-$app->post('/register/enterprise', EnterpriseController::class . ':InsertNewEnterprise');
+$app->group('/register', function() use ($app) {
+   $app->post('/person', UserController::class . ':InsertNewUser');
+   $app->post('/enterprise', EnterpriseController::class . ':InsertNewEnterprise');
+});
 
 // person routes with authentication
-$app->group('', function() use ($app) {
-   $app->post('/person/curriculum/new', CurriculumController::class . ':newCurriculum');
+$app->group('/person', function() use ($app) {
+   $app->post('/curriculum/new', CurriculumController::class . ':newCurriculum');
 
 })->add(basicAuth::authPerson());
 

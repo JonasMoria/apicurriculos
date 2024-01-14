@@ -27,6 +27,8 @@ class CurriculumController {
 
         try {
 
+            $curriculum->setCurriculumName(Security::removeDoubleSpace($params['curriculum_name']));
+
             $personalInfo = $params['personal_info'];
             $curriculum->setPersonName(Security::removeDoubleSpace(Security::fixName($personalInfo['name'])));
             $curriculum->setPersonCity(Security::removeDoubleSpace(Security::fixName($personalInfo['city'])));
