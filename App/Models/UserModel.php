@@ -54,9 +54,9 @@ class UserModel {
         }
     }
 
-    public function getArrayPersonsAuth() {
+    public function getArrayPersonsAuth(string $user, string $pass512) {
         $dao = $this->DAO;
-        $users = $dao->getPersonsToAuth();
+        $users = $dao->getPersonsToAuth($user, $pass512);
 
         $arrayUsers = [];
         foreach ($users as $user) {
