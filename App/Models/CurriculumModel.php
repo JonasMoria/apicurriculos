@@ -25,6 +25,12 @@ class CurriculumModel {
 
     private $DAO;
 
+    const MAX_SOCIAL_NETWORKS = 3;
+    const MAX_EDUCATION = 4;
+    const MAX_EXPERIENCES = 4;
+    const MAX_LANGS = 4;
+    const MAX_SKILLS = 10;
+
     public function __construct() {
         $this->DAO = new CurriculumDAO();
     }
@@ -77,9 +83,15 @@ class CurriculumModel {
     }
 
     public function setPersonSocialNetworks (array $personSocialNetworks) {
+        $count = 0;
         foreach ($personSocialNetworks as $social => $link) {
+            if ($count > self::MAX_SOCIAL_NETWORKS) {
+                throw new InvalidArgumentException('Máximo de ' . self::MAX_SOCIAL_NETWORKS . ' Redes Sociais já atingido. Cadastre outro currículo para as demais redes sociais');
+            }
+
             if ($link) {
                 Security::validateLink($link, $social);
+                $count++;
             }
         }
 
@@ -91,7 +103,12 @@ class CurriculumModel {
     }
 
     public function setPersonEducation (array $personEducation) {
+        $count = 0;
         foreach ($personEducation as $course => $courseInfo) {
+            if ($count > self::MAX_EDUCATION) {
+                throw new InvalidArgumentException('Máximo de ' . self::MAX_EDUCATION . ' Formações já atingido. Cadastre outro currículo para as demais formações');
+            }
+
             if ($course) {
                 Security::validateEmpty($courseInfo['course_name'], 'nome do curso');
                 Security::validateEmpty($courseInfo['course_modality'], 'modalidade');
@@ -99,6 +116,7 @@ class CurriculumModel {
                 Security::validateNumber($courseInfo['status'], 'status');
                 Security::validateDateEmpty(Security::formatDate($courseInfo['init']), 'curso - início');
                 Security::validateDateEmpty(Security::formatDate($courseInfo['finish']), 'curso - fim');
+                $count++;
             }
         }
 
@@ -110,8 +128,14 @@ class CurriculumModel {
     }
 
     public function setPersonSkills (array $personSkills) {
+        $count = 0;
         foreach ($personSkills as $key => $skill) {
+            if ($count > self::MAX_SKILLS) {
+                throw new InvalidArgumentException('Máximo de ' . self::MAX_SKILLS . ' Habilidades já atingido. Cadastre outro currículo para as demais habilidades');
+            }
+
             $personSkills[$key] = Security::sanitizeString($skill);
+            $count++;
         }
 
         if (!empty($personSkills)) {
@@ -122,8 +146,14 @@ class CurriculumModel {
     }
 
     public function setPersonLanguages (array $personLanguages) {
+        $count = 0;
         foreach ($personLanguages as $key => $lang) {
+            if ($count >= self::MAX_LANGS) {
+                throw new InvalidArgumentException('Máximo de ' . self::MAX_LANGS . ' Linguagens já atingido. Cadastre outro currículo para as demais linguagens');
+            }
+
             $personLanguages[$key] = Security::sanitizeString($lang);
+            $count++;
         }
 
         if (!empty($personLanguages)) {
@@ -134,12 +164,18 @@ class CurriculumModel {
     }
 
     public function setPersonExperiences (array $personExperiences) {
+        $count = 0;
         foreach ($personExperiences as $enterprise => $info) {
+            if ($count > self::MAX_EXPERIENCES) {
+                throw new InvalidArgumentException('Máximo de ' . self::MAX_EXPERIENCES . ' experiencias já atingido. Cadastre outro currículo para as demais experiências');
+            }
+
             if ($enterprise) {
                 Security::validateEmpty($info['office'], 'cargo');
                 Security::validateDateEmpty(Security::formatDate($info['init']), 'emprego - inicio');
                 Security::validateDateEmpty(Security::formatDate($info['finish']), 'emprego - término');
                 Security::validateEmpty($info['activities'], 'atividades');
+                $count++;
             }
         }
         if (!empty($personExperiences)) {
