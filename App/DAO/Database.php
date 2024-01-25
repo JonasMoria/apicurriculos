@@ -5,7 +5,6 @@ namespace App\DAO;
 use Exception;
 
 class Database {
-    
     private static function connectionDB() {
         $host = getenv('DB_HOST');
         $database = getenv('DB_NAME');

@@ -350,4 +350,20 @@ class CurriculumModel {
             }
         }
     }
+
+    public function get($userID, $curriculumID) {
+        $dao = $this->DAO;
+
+        $curriculum = [];
+
+        $curriculum['curriculum_name'] = $dao->getCurriculumName($userID, $curriculumID);
+        $curriculum['personal_info'] = $dao->getPersonalInfo($userID, $curriculumID);
+        $curriculum['personal_contact'] = $dao->getPersonalContact($userID, $curriculumID);
+        $curriculum['personal_education'] = $dao->getPersonalEducation($userID, $curriculumID);
+        $curriculum['personal_skills'] = $dao->getPersonalSkills($userID, $curriculumID);
+        $curriculum['personal_languages'] = $dao->getPersonalLangs($userID, $curriculumID);
+        $curriculum['personal_experience'] = $dao->getPersonalExperience($userID, $curriculumID);
+
+        return $curriculum;
+    }
 }

@@ -14,6 +14,10 @@ class Security {
         return filter_var($email, FILTER_SANITIZE_EMAIL);
     }
 
+    public static function filterInt($number) {
+        return filter_var($number, FILTER_VALIDATE_INT);
+    }
+
     public static function validatePassword($password) {
         return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\w$@]{6,}$/', $password);
     }

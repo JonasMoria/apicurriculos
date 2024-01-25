@@ -21,7 +21,28 @@ class CurriculumController {
         $this->model = new CurriculumModel();
     }
 
-    public function newCurriculum(Request $request, Response $response, array $args) : Response {
+    public function view(Request $request, Response $response, array $args) : Response {
+        $curriculum = $this->model;
+        $userID = $_SESSION['user_id'];
+        $curriculumID = Security::filterInt($args['id']);
+
+        try {
+            $curriculumData = $curriculum->get($userID, $curriculumID);
+
+            $response->getBody()->write(
+                json_encode($curriculumData)
+            );
+
+        } catch (Exception $error) {
+            $response->getBody()->write(
+                Http::obtainJsonError($error->getMessage())
+            );
+        }
+
+        return $response;
+    }
+
+    public function new(Request $request, Response $response, array $args) : Response {
         $curriculum = $this->model;
         $params = $request->getParsedBody();
 
