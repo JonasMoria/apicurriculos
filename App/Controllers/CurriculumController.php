@@ -5,17 +5,15 @@ namespace App\Controllers;
 use App\Models\CurriculumModel;
 use App\Models\Http;
 use App\Models\Security;
-use Exception;
-use InvalidArgumentException;
 use Random\Engine\Secure;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
+
 class CurriculumController {
     private $model;
-
-    /**Máximo  de currículos por pessoa */
-    const MAX_CURRICULUM = 3;
 
     public function __construct() {
         $this->model = new CurriculumModel();
@@ -25,21 +23,17 @@ class CurriculumController {
         $curriculum = $this->model;
         $userID = $_SESSION['user_id'];
         $curriculumID = Security::filterInt($args['id']);
-
+        
         try {
             $curriculumData = $curriculum->get($userID, $curriculumID);
+            return Http::getJsonReponseSuccess($response, $curriculumData, 'Sucesso', Http::OK);
 
-            $response->getBody()->write(
-                json_encode($curriculumData)
-            );
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
 
-        } catch (Exception $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
         }
-
-        return $response;
     }
 
     public function new(Request $request, Response $response, array $args) : Response {
@@ -77,20 +71,16 @@ class CurriculumController {
             $curriculum->setPersonExperiences($personalExperience);
 
             $curriculum->insert($curriculum);
-            $json = Http::obtainJsonSuccess('Currículo cadastrado com sucesso');
+            return Http::getJsonReponseSuccess($response, [], 'Currículo Cadastrado Com Sucesso', Http::CREATED);
 
-            $response->getBody()->write($json);
-            
-        } catch (InvalidArgumentException $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
-        } catch (Exception $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
         }
-        
-        return $response;
     }
 }

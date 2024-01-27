@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use DateTime;
-use InvalidArgumentException;
+use App\Exceptions\InvalidParamException;
 
 class Security {
     public static function sanitizeString($string) {
@@ -32,10 +32,10 @@ class Security {
 
     public static function validateName(string $name) {
         if (empty($name)) {
-            throw new InvalidArgumentException('Nome não pode ser vazio!');
+            throw new InvalidParamException('Nome não pode ser vazio!');
         }
         if (strlen($name) > 256) {
-            throw new InvalidArgumentException('Nome deve conter até 256 caracteres!');
+            throw new InvalidParamException('Nome deve conter até 256 caracteres!');
         }
     }
 
@@ -45,34 +45,34 @@ class Security {
 
     public static function validateEmail(string $email) {
         if (empty($email)) {
-            throw new InvalidArgumentException('Email não pode ser vazio!');
+            throw new InvalidParamException('Email não pode ser vazio!');
         }
         if (strlen($email) > 256) {
-            throw new InvalidArgumentException('Email deve conter até 256 caracteres!');
+            throw new InvalidParamException('Email deve conter até 256 caracteres!');
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Email inválido, verifique os dados e tente novamente!');
+            throw new InvalidParamException('Email inválido, verifique os dados e tente novamente!');
         }
     }
 
     public static function validatePass(string $password) {
         if (empty($password)) {
-            throw new InvalidArgumentException('Senha não pode ser vazia!');
+            throw new InvalidParamException('Senha não pode ser vazia!');
         }
         if (!self::validatePassword($password)) {
-            throw new InvalidArgumentException('Senha Inválida. Verifique se: Tem mais de 6 caracteres, letras maiúsculas e minúsculas e números');
+            throw new InvalidParamException('Senha Inválida. Verifique se: Tem mais de 6 caracteres, letras maiúsculas e minúsculas e números');
         }
     }
 
     public static function validateCity(string $city) {
         if (strlen($city) < 3 || strlen($city) > 256) {
-            throw new InvalidArgumentException('Campo Cidade do usuário inválido');
+            throw new InvalidParamException('Campo Cidade do usuário inválido');
         }
     }
 
     public static function validateUF(string $UF) {
         if (strlen($UF) != 2) {
-            throw new InvalidArgumentException('Campo UF do usuário inválido');
+            throw new InvalidParamException('Campo UF do usuário inválido');
         }
     }
 
@@ -80,13 +80,13 @@ class Security {
         $regex = "/^[A-ZÀ-Ÿ][A-zÀ-ÿ']+\s([A-zÀ-ÿ']\s?)*[A-ZÀ-Ÿ][A-zÀ-ÿ']+$/";
     
         if (!preg_match($regex, $name)) {
-            throw new InvalidArgumentException('Campo Nome do usuário deve ser composto por no mínimo nome e sobrenome');
+            throw new InvalidParamException('Campo Nome do usuário deve ser composto por no mínimo nome e sobrenome');
         }
     }
 
     public static function validatePersonDescription(string $description) {
         if (strlen($description) > 300) {
-            throw new InvalidArgumentException('Campo Descrição do usuário deve ser composto de no máximo 300 caracteres');
+            throw new InvalidParamException('Campo Descrição do usuário deve ser composto de no máximo 300 caracteres');
         }
     }
 
@@ -102,7 +102,7 @@ class Security {
         $dateNow = new DateTime();
 
         if ($dateNow < $date) {
-            throw new InvalidArgumentException('Campo ' . htmlspecialchars($field) .  ' inválido');
+            throw new InvalidParamException('Campo ' . htmlspecialchars($field) .  ' inválido');
         }
     }
 
@@ -110,18 +110,18 @@ class Security {
         $dateNow = new DateTime();
 
         if ($dateNow < $date) {
-            throw new InvalidArgumentException('Campo Data de Nascimento do usuário inválida');
+            throw new InvalidParamException('Campo Data de Nascimento do usuário inválida');
         }
     }
 
     public static function validatePhone(string $phone) {
         if (!is_numeric($phone)) {
-            throw new InvalidArgumentException('Campo Telefone do usuário inválido');
+            throw new InvalidParamException('Campo Telefone do usuário inválido');
         }
 
         if (strlen($phone) != 13) {
             if (strlen($phone) != 12) {
-                throw new InvalidArgumentException('Campo Telefone do usuário inválido');
+                throw new InvalidParamException('Campo Telefone do usuário inválido');
             }
         }
     }
@@ -129,22 +129,22 @@ class Security {
     public static function validateLink(string $link, string $fieldName = '') {
         if (!self::validateURL($link)) {
             if ($fieldName != '') {
-                throw new InvalidArgumentException('Campo redes sociais - ' . htmlspecialchars($fieldName) . ' inválido');
+                throw new InvalidParamException('Campo redes sociais - ' . htmlspecialchars($fieldName) . ' inválido');
             } else {
-                throw new InvalidArgumentException('Link inválido');
+                throw new InvalidParamException('Link inválido');
             }
         }
     }
 
     public static function validateEmpty($field, $fieldName) {
         if (empty($field)) {
-            throw new InvalidArgumentException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
+            throw new InvalidParamException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
         }
     }
 
     public static function validateNumber($num, $fieldName) {
         if (!is_numeric($num) || $num < 0) {
-            throw new InvalidArgumentException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
+            throw new InvalidParamException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
         }
     }
 

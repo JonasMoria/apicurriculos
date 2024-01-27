@@ -5,10 +5,11 @@ namespace App\Controllers;
 use App\Models\Http;
 use App\Models\Security;
 use App\Models\UserModel;
-use Exception;
-use InvalidArgumentException;
 use Slim\Http\Request;
 use Slim\Http\Response;
+
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class UserController {
     private $model;
@@ -28,20 +29,16 @@ class UserController {
             $user->setPassword($params['password']);
 
             $user->insert($user);
-            $json = Http::obtainJsonSuccess('Usuário cadastrado com sucesso');
+            return Http::getJsonReponseSuccess($response, [], 'Usuário Cadastrado Com Sucesso', Http::CREATED);
 
-            $response->getBody()->write($json);
-            
-        } catch (InvalidArgumentException $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
-        } catch (Exception $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
         }
-
-        return $response;
     }
 }

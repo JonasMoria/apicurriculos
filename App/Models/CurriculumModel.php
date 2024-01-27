@@ -4,7 +4,8 @@ namespace App\Models;
 
 use App\DAO\CurriculumDAO;
 use DateTime;
-use InvalidArgumentException;
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class CurriculumModel {
     private string $personID;
@@ -25,6 +26,8 @@ class CurriculumModel {
 
     private $DAO;
 
+    const MAX_CURRICULUM = 3;
+
     const MAX_SOCIAL_NETWORKS = 3;
     const MAX_EDUCATION = 4;
     const MAX_EXPERIENCES = 4;
@@ -37,7 +40,7 @@ class CurriculumModel {
 
     public function setPersonID(string $personID) {
         if ($personID < 0) {
-            throw new InvalidArgumentException('Campo ID do usuário obrigatório');
+            throw new InvalidParamException('Campo ID do usuário obrigatório');
         }
 
         $this->personID = $personID;
@@ -86,7 +89,7 @@ class CurriculumModel {
         $count = 0;
         foreach ($personSocialNetworks as $social => $link) {
             if ($count > self::MAX_SOCIAL_NETWORKS) {
-                throw new InvalidArgumentException('Máximo de ' . self::MAX_SOCIAL_NETWORKS . ' Redes Sociais já atingido. Cadastre outro currículo para as demais redes sociais');
+                throw new InvalidParamException('Máximo de ' . self::MAX_SOCIAL_NETWORKS . ' Redes Sociais já atingido. Cadastre outro currículo para as demais redes sociais');
             }
 
             if ($link) {
@@ -106,7 +109,7 @@ class CurriculumModel {
         $count = 0;
         foreach ($personEducation as $course => $courseInfo) {
             if ($count > self::MAX_EDUCATION) {
-                throw new InvalidArgumentException('Máximo de ' . self::MAX_EDUCATION . ' Formações já atingido. Cadastre outro currículo para as demais formações');
+                throw new InvalidParamException('Máximo de ' . self::MAX_EDUCATION . ' Formações já atingido. Cadastre outro currículo para as demais formações');
             }
 
             if ($course) {
@@ -131,7 +134,7 @@ class CurriculumModel {
         $count = 0;
         foreach ($personSkills as $key => $skill) {
             if ($count > self::MAX_SKILLS) {
-                throw new InvalidArgumentException('Máximo de ' . self::MAX_SKILLS . ' Habilidades já atingido. Cadastre outro currículo para as demais habilidades');
+                throw new InvalidParamException('Máximo de ' . self::MAX_SKILLS . ' Habilidades já atingido. Cadastre outro currículo para as demais habilidades');
             }
 
             $personSkills[$key] = Security::sanitizeString($skill);
@@ -149,7 +152,7 @@ class CurriculumModel {
         $count = 0;
         foreach ($personLanguages as $key => $lang) {
             if ($count >= self::MAX_LANGS) {
-                throw new InvalidArgumentException('Máximo de ' . self::MAX_LANGS . ' Linguagens já atingido. Cadastre outro currículo para as demais linguagens');
+                throw new InvalidParamException('Máximo de ' . self::MAX_LANGS . ' Linguagens já atingido. Cadastre outro currículo para as demais linguagens');
             }
 
             $personLanguages[$key] = Security::sanitizeString($lang);
@@ -167,7 +170,7 @@ class CurriculumModel {
         $count = 0;
         foreach ($personExperiences as $enterprise => $info) {
             if ($count > self::MAX_EXPERIENCES) {
-                throw new InvalidArgumentException('Máximo de ' . self::MAX_EXPERIENCES . ' experiencias já atingido. Cadastre outro currículo para as demais experiências');
+                throw new InvalidParamException('Máximo de ' . self::MAX_EXPERIENCES . ' experiencias já atingido. Cadastre outro currículo para as demais experiências');
             }
 
             if ($enterprise) {
@@ -256,12 +259,16 @@ class CurriculumModel {
     public function insert(CurriculumModel $curriculum) {
         $dao = $this->DAO;
 
+        if ($dao->countPersonCurriculum($curriculum->getPersonID()) >= self::MAX_CURRICULUM) {
+            throw new InvalidParamException('Limite de ' . self::MAX_CURRICULUM . ' Currículos Cadastrados Atingido.');
+        }
+
         $curriculumData['user_id'] = $curriculum->getPersonID();
         $curriculumData['cv_name'] = $curriculum->getCurriculumName();
 
         $idCurriculum = $dao->createCurriculum($curriculumData);
         if (!$idCurriculum) {
-            throw new InvalidArgumentException('Não foi possível criar o currículo');
+            throw new SqlQueryException('Não foi possível criar o currículo');
         }
 
         $personalInfo['curriculum_id'] = $idCurriculum;
@@ -274,7 +281,7 @@ class CurriculumModel {
 
         $idPersonalInfo = $dao->insertPersonalInfo($personalInfo);
         if (!$idPersonalInfo) {
-            throw new InvalidArgumentException('Não foi possível inserir as informações pessoais');
+            throw new SqlQueryException('Não foi possível inserir as informações pessoais');
         }
 
         $phones = $curriculum->getPersonPhones();
@@ -289,7 +296,7 @@ class CurriculumModel {
 
         $idPersonalContact = $dao->insertPersonalContact($personalContact);
         if (!$idPersonalContact) {
-            throw new InvalidArgumentException('Não foi possível inserir as informações de contato');
+            throw new SqlQueryException('Não foi possível inserir as informações de contato');
         }
 
         $personalEducations = $curriculum->getPersonEducation();
@@ -306,7 +313,7 @@ class CurriculumModel {
 
             $idPersonalEducation = $dao->insertPersonalEducation($education);
             if (!$idPersonalContact) {
-                throw new InvalidArgumentException('Não foi possível inserir as informações de educação');
+                throw new SqlQueryException('Não foi possível inserir as informações de educação');
             }
         }
 
@@ -322,7 +329,7 @@ class CurriculumModel {
 
             $idPersonalExperience = $dao->insertPersonalExperience($job);
             if (!$idPersonalExperience) {
-                throw new InvalidArgumentException('Não foi possível inserir as informações de experiência');
+                throw new SqlQueryException('Não foi possível inserir as informações de experiência');
             }
         }
 
@@ -334,7 +341,7 @@ class CurriculumModel {
 
             $idPersonalSkills = $dao->insertPersonalSkills($skillDB);
             if (!$idPersonalSkills) {
-                throw new InvalidArgumentException('Não foi possível inserir as informações de habilidades');
+                throw new SqlQueryException('Não foi possível inserir as informações de habilidades');
             }
         }
 
@@ -346,7 +353,7 @@ class CurriculumModel {
 
             $idPersonalLangs = $dao->insertPersonalLangs($langDB);
             if (!$idPersonalLangs) {
-                throw new InvalidArgumentException('Não foi possível inserir as informações de linguagens');
+                throw new SqlQueryException('Não foi possível inserir as informações de linguagens');
             }
         }
     }

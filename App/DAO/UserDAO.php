@@ -4,7 +4,9 @@ namespace App\DAO;
 
 use App\Models\Security;
 use App\Models\UserModel;
-use InvalidArgumentException;
+
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class UserDAO {
     private $database;
@@ -23,7 +25,7 @@ class UserDAO {
         $pass = Security::convertToSha512($pass);
 
         if (self::getUserByEmail($email)) {
-            throw new InvalidArgumentException('Usuário já cadastrado');
+            throw new SqlQueryException('Usuário já cadastrado');
         }
 
         $query = "

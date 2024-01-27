@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\DAO\UserDAO;
-use InvalidArgumentException;
+
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class UserModel {
     private string $name;
@@ -50,7 +52,7 @@ class UserModel {
         $dao = $this->DAO;
 
         if (!$dao->executeInsert($user)) {
-            throw new InvalidArgumentException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde');
+            throw new SqlQueryException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde');
         }
     }
 

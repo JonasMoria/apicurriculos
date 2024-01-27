@@ -4,7 +4,9 @@ namespace App\DAO;
 
 use App\Models\EnterpriseModel;
 use App\Models\Security;
-use InvalidArgumentException;
+
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class EnterpriseDAO {
     private $database;
@@ -23,7 +25,7 @@ class EnterpriseDAO {
         $pass = Security::convertToSha512($pass);
 
         if (self::getEnterpriseByEmail($email)) {
-            throw new InvalidArgumentException('Empresa já cadastrada');
+            throw new SqlQueryException('Empresa já cadastrada');
         }
 
         $query = "

@@ -5,10 +5,11 @@ namespace App\Controllers;
 use App\Models\EnterpriseModel;
 use App\Models\Http;
 use App\Models\Security;
-use Exception;
-use InvalidArgumentException;
 use Slim\Http\Request;
 use Slim\Http\Response;
+
+use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
 
 class EnterpriseController {
     private $model;
@@ -27,19 +28,17 @@ class EnterpriseController {
             $enterprise->setPassword($params['password']);
 
             $enterprise->insert($enterprise);
-            $json = Http::obtainJsonSuccess('Empresa cadastrada com sucesso');
+            return Http::getJsonReponseSuccess($response, [], 'Empresa Cadastrada Com Sucesso', Http::CREATED);
 
-            $response->getBody()->write($json);
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
 
-        } catch (InvalidArgumentException $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
-        } catch (Exception $error) {
-            $response->getBody()->write(
-                Http::obtainJsonError($error->getMessage())
-            );
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
         }
-        return $response;
+
     }
 }

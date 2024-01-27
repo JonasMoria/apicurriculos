@@ -2,7 +2,7 @@
 
 namespace App\DAO;
 
-use InvalidArgumentException;
+use App\Exceptions\SqlQueryException;
 
 class CurriculumDAO {
     private $database;
@@ -28,6 +28,24 @@ class CurriculumDAO {
         $idCurriculum = $dbase->insertWithArray(self::TABLE_CV, $data);
 
         return $idCurriculum;
+    }
+
+    public function countPersonCurriculum($userID) {
+        $dbase = $this->database;
+
+        $query = "
+            SELECT
+                COUNT(CV.id) AS qnt
+            FROM
+                " . self::TABLE_CV . " CV
+            WHERE
+                CV.user_id = '" . $dbase->scapeString($userID) . "'
+                    AND CV.status = '" . self::STATUS_ACTIVE . "'
+        ";
+
+        $quantity = $dbase->fetchAssoc($query);
+
+        return (int) $quantity['qnt'];
     }
 
     public function insertPersonalInfo(array $personalInfo) {
@@ -95,7 +113,7 @@ class CurriculumDAO {
 
         $name = $dbase->fetchAssoc($query);
         if (!$name) {
-            throw new InvalidArgumentException('Currículo não encontrado');  
+            throw new SqlQueryException('Currículo não encontrado');  
         }
 
         return $name['name'];
@@ -127,7 +145,7 @@ class CurriculumDAO {
 
         $infos = $dbase->fetchAssoc($query);
         if (!$infos) {
-            throw new InvalidArgumentException('Informações Pessoais não encontradas');  
+            throw new SqlQueryException('Informações Pessoais não encontradas');  
         }
 
         $infoArray = [
@@ -170,7 +188,7 @@ class CurriculumDAO {
 
         $contact = $dbase->fetchAssoc($query);
         if (!$contact) {
-            throw new InvalidArgumentException('Contatos não encontrados');  
+            throw new SqlQueryException('Contatos não encontrados');  
         }
 
         $contactArray['email'] = $contact['person_email'];
