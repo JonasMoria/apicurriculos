@@ -10,4 +10,4 @@ require_once 'src/slimConfiguration.php';
 
 date_default_timezone_set('America/Sao_Paulo');
 
-require_once('routes/routes.php');
+require_once 'routes/routes.php';

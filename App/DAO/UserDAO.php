@@ -55,7 +55,7 @@ class UserDAO {
         return $dbase->fetchAssoc($query);
     }
 
-    public function getPersonsToAuth(string $user, string $pass512) {
+    public function getAuthUser(string $user, string $pass512) {
         $dbase = $this->database;
 
         $userDB = $dbase->scapeString($user);
@@ -65,17 +65,16 @@ class UserDAO {
             SELECT
                 U.id,
                 U.email,
-                U.pass
+                U.pass,
+                U.status
             FROM
                 " . self::TABLE . " U
             WHERE
                 U.email = '" . $userDB . "'
                     AND U.pass = '" . $passDB . "'
-                    AND U.status = '1'
             LIMIT 1
         ";
 
         return $dbase->fetchAssoc($query);
     }
-
 }

@@ -56,20 +56,23 @@ class UserModel {
         }
     }
 
-    public function getArrayPersonsAuth(string $user, string $pass512) {
-        $dao = $this->DAO;
-        $user = $dao->getPersonsToAuth($user, $pass512);
+    private static function setSession($userID) {
+        $_SESSION['user_id'] = $userID;
+    }
 
-        if (!empty($user)) {
-            $_SESSION['user_id'] = $user['id'];
+    public function personAuth(string $user, string $pass512) {
+        $dao = $this->DAO;
+        $user = $dao->getAuthUser($user, $pass512);
+
+        if (!$user) {
+            throw new SqlQueryException('Usuário não cadastrado na plataforma.');
+        }
+        if ($user['status'] == 0) {
+            throw new SqlQueryException('Conta do usuário inativa, entre em contato com o suporte para mais informações.');
         }
 
-        $arrayUser = [
-            $user['email'] => $user['pass']
-        ];
+        self::setSession($user['id']);
 
-        $array['users'] = $arrayUser;
-
-        return $array;
+        return true;
     }
 }
