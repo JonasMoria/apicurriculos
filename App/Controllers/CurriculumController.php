@@ -19,6 +19,22 @@ class CurriculumController {
         $this->model = new CurriculumModel();
     }
 
+    public function list(Request $request, Response $response, array $args) : Response {
+        $curriculum = $this->model;
+        $userID = $_SESSION['user_id'];
+
+        try {
+            $curriculumData = $curriculum->list($userID);
+            return Http::getJsonReponseSuccess($response, $curriculumData, 'Sucesso', Http::OK);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+    }
+
     public function view(Request $request, Response $response, array $args) : Response {
         $curriculum = $this->model;
         $userID = $_SESSION['user_id'];

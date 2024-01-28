@@ -338,5 +338,29 @@ class CurriculumDAO {
         return $langsArray;
     }
 
+    public function listUserCurriculum($userID) {
+        $dbase = $this->database;
+
+        $query = "
+            SELECT
+                CV.id,
+                CV.cv_name,
+                CV.oficial,
+                CV.updated
+            FROM
+                " . self::TABLE_CV . " CV
+            WHERE
+                CV.user_id = '" .  $dbase->scapeString($userID) . "'
+                    AND CV.status = '" . self::STATUS_ACTIVE . "'
+        ";
+
+        $list = $dbase->fetchAll($query);
+
+        if (!$list) {
+            throw new SqlQueryException('Não foram encontrados currículos cadastrados');  
+        }
+
+        return $list;
+    }
 
 }

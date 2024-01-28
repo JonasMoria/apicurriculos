@@ -373,4 +373,20 @@ class CurriculumModel {
 
         return $curriculum;
     }
+
+    public function list($userID) {
+        $dao = $this->DAO;
+
+        $getList = $dao->listUserCurriculum($userID);
+
+        $listInfo = [];
+        foreach ($getList as $key => $list) {
+            $listInfo[$key]['curriculum_id'] = $list['id'];
+            $listInfo[$key]['curriculum_name'] = $list['cv_name'];
+            $listInfo[$key]['curriculum_oficial'] = $list['oficial'];
+            $listInfo[$key]['curriculum_last_update'] = $list['updated'];
+        }
+
+        return $listInfo;
+    }
 }

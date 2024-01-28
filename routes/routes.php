@@ -52,6 +52,8 @@ $middlewareAuthPerson = function (Request $request, Response $response, $next) :
 // person routes with authentication
 $app->group('/person', function() use ($app) {
    $app->post('/curriculum/new', CurriculumController::class . ':new');
+
+   $app->get('/curriculum/list', CurriculumController::class . ':list');
    $app->get('/curriculum/view/{id}', CurriculumController::class . ':view');
 
 })->add($middlewareAuthPerson);
