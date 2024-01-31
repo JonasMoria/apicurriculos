@@ -19,6 +19,65 @@ class CurriculumController {
         $this->model = new CurriculumModel();
     }
 
+    public function update(Request $request, Response $response, array $args) : Response {
+        $curriculum = $this->model;
+        $params = $request->getParsedBody();
+        $userID = $_SESSION['user_id'];
+        $curriculumID = Security::filterInt($args['id']);
+
+        try {
+            if (empty($params)) {
+                throw new InvalidParamException('Não foram identificados dados a serem alterados');
+            }
+
+            $fieldsToUpdate = [];
+            if (!empty($params['curriculum_name'])) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdateCvName($params['curriculum_name']));
+            }
+
+            $personalInfo = $params['personal_info'];
+            if (!empty($personalInfo)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalInfo($personalInfo));
+            }
+
+            $personalContact = $params['personal_contact'];
+            if (!empty($personalContact)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalContact($personalContact));
+            }
+
+            $personalEducation = $params['personal_education'];
+            if (!empty($personalEducation)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalEducation($personalEducation));
+            }
+
+            $personalExperience = $params['personal_experience'];
+            if (!empty($personalExperience)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalExperience($personalExperience));
+            }
+
+            $personalSkills = $params['personal_skills'];
+            if (!empty($personalSkills)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalSkills($personalSkills));
+            }
+
+            $personalLangs = $params['personal_languages'];
+            if (!empty($personalLangs)) {
+                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalLangs($personalLangs));
+            }
+
+            return Http::getJsonReponseSuccess($response, $fieldsToUpdate, 'Currículo Atualizado Com Sucesso', Http::CREATED);
+
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+    }
+
     public function list(Request $request, Response $response, array $args) : Response {
         $curriculum = $this->model;
         $userID = $_SESSION['user_id'];

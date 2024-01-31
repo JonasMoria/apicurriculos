@@ -53,6 +53,8 @@ class Security {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidParamException('Email inválido, verifique os dados e tente novamente!');
         }
+
+        return $email;
     }
 
     public static function validatePass(string $password) {
@@ -101,9 +103,11 @@ class Security {
     public static function validateDateEmpty(Datetime $date, string $field) {
         $dateNow = new DateTime();
 
-        if ($dateNow < $date) {
+        if ($dateNow < $date || empty($date)) {
             throw new InvalidParamException('Campo ' . htmlspecialchars($field) .  ' inválido');
         }
+
+        return $date->format('Y-m-d');
     }
 
     public static function validateDate(DateTime $date) {
@@ -124,6 +128,8 @@ class Security {
                 throw new InvalidParamException('Campo Telefone do usuário inválido');
             }
         }
+
+        return $phone;
     }
 
     public static function validateLink(string $link, string $fieldName = '') {
@@ -134,18 +140,24 @@ class Security {
                 throw new InvalidParamException('Link inválido');
             }
         }
+
+        return $link;
     }
 
     public static function validateEmpty($field, $fieldName) {
         if (empty($field)) {
             throw new InvalidParamException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
         }
+
+        return $field;
     }
 
     public static function validateNumber($num, $fieldName) {
         if (!is_numeric($num) || $num < 0) {
             throw new InvalidParamException('Campo ' . htmlspecialchars($fieldName) . ' inválido');
         }
+
+        return $num;
     }
 
     public static function convertDateToString(Datetime $date) {

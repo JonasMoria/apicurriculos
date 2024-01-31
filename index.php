@@ -1,7 +1,7 @@
 <?php
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE, UPDATE");
+header("Access-Control-Allow-Methods: GET, POST, DELETE, PUT");
 header('Content-Type: application/json; charset=utf-8');
 
 require_once 'vendor/autoload.php';

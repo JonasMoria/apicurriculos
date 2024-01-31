@@ -56,6 +56,8 @@ $app->group('/person', function() use ($app) {
    $app->get('/curriculum/list', CurriculumController::class . ':list');
    $app->get('/curriculum/view/{id}', CurriculumController::class . ':view');
 
+   $app->put('/curriculum/update/{id}', CurriculumController::class . ':update');
+
 })->add($middlewareAuthPerson);
 
 $app->run();
