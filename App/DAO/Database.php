@@ -44,6 +44,13 @@ class Database {
         return mysqli_insert_id($connection);
     }
 
+    public function getAffectedRows($query) {
+        $connection = self::connectionDB();
+        mysqli_query($connection, $query);
+
+        return mysqli_affected_rows($connection);
+    }
+
     public function insertWithArray(string $table, array $array) {
         $fields =  [];
         $values = [];
@@ -61,5 +68,57 @@ class Database {
         ";
 
         return self::getLastInsertId($query);
+    }
+
+    public function update($table, $fields, $where) {
+        $query = "
+            UPDATE " . self::scapeString($table) . "
+            SET
+                " . self::arrayToQueryString($fields) . "
+            WHERE
+                " . self::arrayToQueryString($where, true) . "
+        ";
+
+        return self::getAffectedRows($query);
+    }
+
+    public function delete($table, $where, $limit) {
+        $query = "
+            DELETE FROM " . self::scapeString($table) . "
+            WHERE
+                " . self::arrayToQueryString($where) . "
+            LIMIT " . self::scapeString($limit) . "
+        ";
+
+        return self::getAffectedRows($query);
+    }
+
+    private static function arrayToQueryString(array $data, $isWhereField = false) {
+        $dbase = new Database();
+
+        $queryString = '';
+
+        $total = count($data) - 1;
+        $count = 0;
+
+        foreach ($data as $field => $value) {
+            if ($isWhereField) {
+                $separator = ($count < $total ? ' AND ' : '');
+            } else {
+                $separator = ($count < $total ? ', ' : '');
+            }
+
+            $field = $dbase->scapeString($field);
+            if ($value == 'NOW()' || $value == 'CURRENT_TIMESTAMP()') {
+                $value = $dbase->scapeString($value);
+            } else {
+                $value = "'" . $dbase->scapeString($value) . "'";
+            }
+
+            $queryString .=  $field . ' = ' .  $value  . $separator;
+            $count++;
+        }
+
+        return $queryString;
     }
 }

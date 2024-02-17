@@ -29,41 +29,44 @@ class CurriculumController {
             if (empty($params)) {
                 throw new InvalidParamException('Não foram identificados dados a serem alterados');
             }
+            if (empty($curriculumID)) {
+                throw new SqlQueryException('Currículo não identificado');
+            }
 
             $fieldsToUpdate = [];
             if (!empty($params['curriculum_name'])) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdateCvName($params['curriculum_name']));
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdateCvName($params['curriculum_name']));
             }
 
-            $personalInfo = $params['personal_info'];
-            if (!empty($personalInfo)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalInfo($personalInfo));
+            if (isset($params['oficial']) && in_array($params['oficial'], [0, 1])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayCvOfficial($params['oficial']));
             }
 
-            $personalContact = $params['personal_contact'];
-            if (!empty($personalContact)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalContact($personalContact));
+            if (!empty($params['personal_info'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalInfo($params['personal_info']));
             }
 
-            $personalEducation = $params['personal_education'];
-            if (!empty($personalEducation)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalEducation($personalEducation));
+            if (!empty($params['personal_contact'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalContact($params['personal_contact']));
             }
 
-            $personalExperience = $params['personal_experience'];
-            if (!empty($personalExperience)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalExperience($personalExperience));
+            if (!empty($params['personal_education'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalEducation($params['personal_education']));
             }
 
-            $personalSkills = $params['personal_skills'];
-            if (!empty($personalSkills)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalSkills($personalSkills));
+            if (!empty($params['personal_experience'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalExperience($params['personal_experience']));
             }
 
-            $personalLangs = $params['personal_languages'];
-            if (!empty($personalLangs)) {
-                array_push($fieldsToUpdate, CurriculumModel::makeArrayUpdatePersonalLangs($personalLangs));
+            if (!empty($params['personal_skills'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalSkills($params['personal_skills']));
             }
+
+            if (!empty($params['personal_languages'])) {
+                $fieldsToUpdate += (CurriculumModel::makeArrayUpdatePersonalLangs($params['personal_languages']));
+            }
+
+            $curriculum->update($userID, $curriculumID, $fieldsToUpdate);
 
             return Http::getJsonReponseSuccess($response, $fieldsToUpdate, 'Currículo Atualizado Com Sucesso', Http::CREATED);
 

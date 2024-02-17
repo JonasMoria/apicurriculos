@@ -51,7 +51,6 @@ CREATE TABLE `users_personal_infos` (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	curriculum_id INT UNSIGNED NOT NULL,
     person_name VARCHAR(256) NOT NULL,
-	person_email VARCHAR(256) NOT NULL,
     person_city VARCHAR(256) NOT NULL,
     person_uf VARCHAR(2) NOT NULL,
     person_birth DATE NOT NULL,
@@ -67,11 +66,12 @@ DROP TABLE IF EXISTS `users_personal_contacts`;
 CREATE TABLE `users_personal_contacts` (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	curriculum_id INT UNSIGNED NOT NULL,
+	person_email VARCHAR(256) NOT NULL,
 	person_phone_principal VARCHAR(13) NOT NULL,
 	person_phone_secondary VARCHAR (12),
 	person_linkedin VARCHAR(256),
 	person_facebook VARCHAR(256),
-	person_instragram VARCHAR(256),
+	person_instagram VARCHAR(256),
 	person_site VARCHAR(256),
 
 	PRIMARY KEY(id),

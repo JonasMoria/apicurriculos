@@ -284,7 +284,6 @@ class CurriculumModel {
         $personalInfo['person_name'] = $curriculum->getPersonName();
         $personalInfo['person_city'] = $curriculum->getPersonCity();
         $personalInfo['person_uf'] =  $curriculum->getPersonUF();
-        $personalInfo['person_email'] = $curriculum->getPersonEmail();
         $personalInfo['person_birth'] = Security::convertDateToString($curriculum->getPersonBirthDate());
         $personalInfo['person_desc'] = $curriculum->getPersonDescription();
 
@@ -296,11 +295,12 @@ class CurriculumModel {
         $phones = $curriculum->getPersonPhones();
         $socialNetworks = $curriculum->getPersonSocialNetworks();
         $personalContact['curriculum_id'] = $idCurriculum;
+        $personalContact['person_email'] = $curriculum->getPersonEmail();
         $personalContact['person_phone_principal'] = $phones['principal'];
         $personalContact['person_phone_secondary'] = $phones['secondary'];
         $personalContact['person_linkedin'] = $socialNetworks['linkedIn'];
         $personalContact['person_facebook'] = $socialNetworks['facebook'];
-        $personalContact['person_instragram'] = $socialNetworks['instagram'];
+        $personalContact['person_instagram'] = $socialNetworks['instagram'];
         $personalContact['person_site'] = $socialNetworks['site'];
 
         $idPersonalContact = $dao->insertPersonalContact($personalContact);
@@ -399,8 +399,40 @@ class CurriculumModel {
         return $listInfo;
     }
 
-    public function update(array $fieldsToUpdate) {
+    public function update(int $userID, int $curriculumID, array $fieldsToUpdate) {
+        $dao = $this->DAO;
 
+        if (isset($fieldsToUpdate['curriculum_name'])) {
+            $dao->updateName($userID, $curriculumID, $fieldsToUpdate['curriculum_name']);
+        }
+
+        if (isset($fieldsToUpdate['oficial'])) {
+            $dao->setOfficial($userID, $curriculumID, $fieldsToUpdate['oficial']);
+        }
+
+        if (isset($fieldsToUpdate['personal_info'])) {
+            $dao->updatePersonalInfo($curriculumID, $fieldsToUpdate['personal_info']);
+        }
+
+        if (isset($fieldsToUpdate['personal_contact'])) {
+            $dao->updatePersonalContact($curriculumID, $fieldsToUpdate['personal_contact']);
+        }
+    
+        if (isset($fieldsToUpdate['personal_education'])) {
+            $dao->updatePersonEducation($curriculumID, $fieldsToUpdate['personal_education']);
+        }
+    
+        if (isset($fieldsToUpdate['personal_experience'])) {
+            $dao->updatePersonExperiences($curriculumID, $fieldsToUpdate['personal_experience']);
+        }
+
+        if (isset($fieldsToUpdate['personal_skills'])) {
+            $dao->updatePersonalSkills($curriculumID, $fieldsToUpdate['personal_skills']);
+        }
+
+        if (isset($fieldsToUpdate['personal_languages'])) {
+            $dao->updatePersonalLangs($curriculumID, $fieldsToUpdate['personal_languages']);
+        }
     }
 
     public static function makeArrayUpdateCvName(string $curriculumName) {
@@ -411,23 +443,38 @@ class CurriculumModel {
         return $fieldsToUpdate;
     }
 
+    public static function makeArrayCvOfficial(int $oficial) {
+        $fieldsToUpdate = [];
+
+        if (!in_array($oficial, [0, 1])) {
+            throw new InvalidParamException('Status Inválido');
+        }
+
+        $fieldsToUpdate['oficial'] = $oficial;
+
+        return $fieldsToUpdate;
+    }
+
     public static function makeArrayUpdatePersonalInfo(array $personalInfo) {
         $fieldsToUpdate = [];
 
         if (!empty($personalInfo['name'])) {
-            $fieldsToUpdate['personal_info']['name'] = Security::removeDoubleSpace(Security::fixName($personalInfo['name']));
+            $fieldsToUpdate['personal_info']['person_name'] = Security::removeDoubleSpace(Security::fixName($personalInfo['name']));
+        }
+        if(!empty($personalContact['email'])) {
+            $fieldsToUpdate['personal_contact']['person_email'] = Security::validateEmail($personalContact['email']);
         }
         if (!empty($personalInfo['city'])) {
-            $fieldsToUpdate['personal_info']['city'] = (Security::removeDoubleSpace(Security::fixName($personalInfo['city'])));
+            $fieldsToUpdate['personal_info']['person_city'] = (Security::removeDoubleSpace(Security::fixName($personalInfo['city'])));
         }
         if (!empty($personalInfo['uf'])) {
-            $fieldsToUpdate['personal_info']['uf'] = strtoupper($personalInfo['uf']);
+            $fieldsToUpdate['personal_info']['person_uf'] = strtoupper($personalInfo['uf']);
         }
         if (!empty($personalInfo['birthdate'])) {
-            $fieldsToUpdate['personal_info']['birthdate'] = $personalInfo['birthdate'];
+            $fieldsToUpdate['personal_info']['person_birth'] = $personalInfo['birthdate'];
         }
         if (!empty($personalInfo['description'])) {
-            $fieldsToUpdate['personal_info']['description'] = Security::sanitizeString($personalInfo['description']);
+            $fieldsToUpdate['personal_info']['person_desc'] = Security::sanitizeString($personalInfo['description']);
         }
 
         return $fieldsToUpdate;
@@ -436,31 +483,27 @@ class CurriculumModel {
     public static function makeArrayUpdatePersonalContact(array $personalContact) {
         $fieldsToUpdate = [];
 
-        if(!empty($personalContact['email'])) {
-            $fieldsToUpdate['personal_contact']['email'] = Security::validateEmail($personalContact['email']);
-        }
-
         $phones = $personalContact['phones'];
         if(!empty($phones['principal'])) {
-            $fieldsToUpdate['personal_contact']['phones']['principal'] = Security::validatePhone($phones['principal']);
+            $fieldsToUpdate['personal_contact']['person_phone_principal'] = Security::validatePhone($phones['principal']);
         }
         if(!empty($phones['secondary'])) {
-            $fieldsToUpdate['personal_contact']['phones']['secondary'] = Security::validatePhone($phones['secondary']);
+            $fieldsToUpdate['personal_contact']['person_phone_secondary'] = Security::validatePhone($phones['secondary']);
         }
 
         $networks = $personalContact['social_networks'];
         if (!empty($networks)) {
             if (!empty($networks['linkedIn'])) { 
-                $fieldsToUpdate['personal_contact']['social_networks']['linkedIn'] = Security::validateLink($networks['linkedIn']);
+                $fieldsToUpdate['personal_contact']['person_linkedin'] = Security::validateLink($networks['linkedIn']);
             }
             if (!empty($networks['facebook'])) { 
-                $fieldsToUpdate['personal_contact']['social_networks']['facebook'] = Security::validateLink($networks['facebook']);
+                $fieldsToUpdate['personal_contact']['person_facebook'] = Security::validateLink($networks['facebook']);
             }
             if (!empty($networks['instagram'])) { 
-                $fieldsToUpdate['personal_contact']['social_networks']['instagram'] = Security::validateLink($networks['instagram']);
+                $fieldsToUpdate['personal_contact']['person_instagram'] = Security::validateLink($networks['instagram']);
             }
             if (!empty($networks['site'])) { 
-                $fieldsToUpdate['personal_contact']['social_networks']['site'] = Security::validateLink($networks['site']);
+                $fieldsToUpdate['personal_contact']['person_site'] = Security::validateLink($networks['site']);
             }
         }
 
@@ -470,25 +513,30 @@ class CurriculumModel {
     public static function makeArrayUpdatePersonalEducation(array $personalEducation) {
         $fieldsToUpdate = [];
     
-        foreach ($personalEducation as $course => $courseInfo) {
-            if (!empty($course)) {
+        foreach ($personalEducation as $courseInfo) {
+            $key = Security::filterInt($courseInfo['id']);
+
+            if (!empty($key)) {
+                if (!empty($courseInfo['course_acronym'])) {
+                    $fieldsToUpdate['personal_education'][$key]['person_course_acronym'] = Security::validateEmpty($courseInfo['course_acronym'], 'sigla do curso');
+                }
                 if (!empty($courseInfo['course_name'])) {
-                    $fieldsToUpdate['personal_education'][$course]['course_name'] = Security::validateEmpty($courseInfo['course_name'], 'nome do curso');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_name'] = Security::validateEmpty($courseInfo['course_name'], 'nome do curso');
                 }
                 if (!empty($courseInfo['course_modality'])) {
-                    $fieldsToUpdate['personal_education'][$course]['course_modality'] = Security::validateEmpty($courseInfo['course_modality'], 'modalidade');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_modality'] = Security::validateEmpty($courseInfo['course_modality'], 'modalidade');
                 }
                 if (!empty($courseInfo['institution'])) {
-                    $fieldsToUpdate['personal_education'][$course]['institution'] = Security::validateEmpty($courseInfo['institution'], 'instituição');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_institution'] = Security::validateEmpty($courseInfo['institution'], 'instituição');
                 }
                 if (!empty($courseInfo['status'])) {
-                    $fieldsToUpdate['personal_education'][$course]['status'] = Security::validateNumber($courseInfo['status'], 'status');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_status'] = Security::validateNumber($courseInfo['status'], 'status');
                 }
                 if (!empty($courseInfo['init'])) {
-                    $fieldsToUpdate['personal_education'][$course]['init'] =  Security::validateDateEmpty(Security::formatDate($courseInfo['init']), 'curso - início');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_init'] =  Security::validateDateEmpty(Security::formatDate($courseInfo['init']), 'curso - início');
                 }
                 if (!empty($courseInfo['finish'])) {
-                    $fieldsToUpdate['personal_education'][$course]['finish'] = Security::validateDateEmpty(Security::formatDate($courseInfo['finish']), 'curso - fim');
+                    $fieldsToUpdate['personal_education'][$key]['person_course_finish'] = Security::validateDateEmpty(Security::formatDate($courseInfo['finish']), 'curso - fim');
                 }
             }
         }
@@ -499,19 +547,24 @@ class CurriculumModel {
     public static function makeArrayUpdatePersonalExperience(array $personalExperience) {
         $fieldsToUpdate = [];
 
-        foreach ($personalExperience as $enterprise => $jobInfo) {
-            if (!empty($enterprise)) {
+        foreach ($personalExperience as $jobInfo) {
+            $key = Security::filterInt($jobInfo['id']);
+
+            if (!empty($jobInfo['id'])) {
+                if (!empty($jobInfo['enterprise'])) {
+                    $fieldsToUpdate['personal_experience'][$key]['person_experience_enterprise'] = Security::validateEmpty($jobInfo['enterprise'], 'empresa');
+                }
                 if (!empty($jobInfo['office'])) {
-                    $fieldsToUpdate['personal_experience'][$enterprise]['office'] = Security::validateEmpty($jobInfo['office'], 'cargo');
+                    $fieldsToUpdate['personal_experience'][$key]['person_experience_office'] = Security::validateEmpty($jobInfo['office'], 'cargo');
                 }
                 if (!empty($jobInfo['init'])) {
-                    $fieldsToUpdate['personal_experience'][$enterprise]['init'] = Security::validateDateEmpty(Security::formatDate($jobInfo['init']), 'emprego - inicio');
+                    $fieldsToUpdate['personal_experience'][$key]['person_experience_init'] = Security::validateDateEmpty(Security::formatDate($jobInfo['init']), 'emprego - inicio');
                 }
                 if (!empty($jobInfo['finish'])) {
-                    $fieldsToUpdate['personal_experience'][$enterprise]['finish'] = Security::validateDateEmpty(Security::formatDate($jobInfo['finish']), 'emprego - término');;
+                    $fieldsToUpdate['personal_experience'][$key]['person_experience_finish'] = Security::validateDateEmpty(Security::formatDate($jobInfo['finish']), 'emprego - término');;
                 }
                 if (!empty($jobInfo['activities'])) {
-                    $fieldsToUpdate['personal_experience'][$enterprise]['activities'] = Security::validateEmpty($jobInfo['activities'], 'atividades');;
+                    $fieldsToUpdate['personal_experience'][$key]['person_experience_activities'] = Security::validateEmpty($jobInfo['activities'], 'atividades');;
                 }
             }
         }

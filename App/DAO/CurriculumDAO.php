@@ -3,6 +3,7 @@
 namespace App\DAO;
 
 use App\Exceptions\SqlQueryException;
+use App\Models\CurriculumModel;
 
 class CurriculumDAO {
     private $database;
@@ -164,21 +165,18 @@ class CurriculumDAO {
 
         $query = "
             SELECT
-                PI.person_email,
+                PC.person_email,
                 PC.person_phone_principal,
                 PC.person_phone_secondary,
                 PC.person_linkedin,
                 PC.person_facebook,
-                PC.person_instragram,
+                PC.person_instagram,
                 PC.person_site
             FROM
                 " . self::TABLE_CV . " CV
             INNER JOIN
-                " . self::TABLE_PI . " PI
-                    ON PI.curriculum_id = CV.id
-            INNER JOIN
                 " . self::TABLE_PC . " PC
-                    ON PC.curriculum_id = PI.curriculum_id
+                    ON PC.curriculum_id = CV.id
             WHERE
                 CV.user_id = '" . $dbase->scapeString($userID) . "'
                     AND CV.id = '" . $dbase->scapeString($curriculumID) . "'
@@ -199,7 +197,7 @@ class CurriculumDAO {
         $contactArray['social_networks'] = [
             'linkedIn' => $contact['person_linkedin'],
             'facebook' => $contact['person_facebook'],
-            'instagram' => $contact['person_instragram'],
+            'instagram' => $contact['person_instagram'],
             'site' => $contact['person_site'],
         ];
 
@@ -211,6 +209,7 @@ class CurriculumDAO {
 
         $query = "
             SELECT
+                PE.id,
                 PE.person_course_acronym,
                 PE.person_course_name,
                 PE.person_course_modality,
@@ -233,7 +232,8 @@ class CurriculumDAO {
 
         $arrayEducations = []; 
         foreach ($educations as $education) {
-            $arrayEducations[$education['person_course_acronym']] = [
+            $arrayEducations[$education['id']] = [
+                'course_acronym' => $education['person_course_acronym'],
                 'course_name' => $education['person_course_name'],
                 'course_modality' => $education['person_course_modality'],
                 'institution' => $education['person_course_institution'],
@@ -253,6 +253,7 @@ class CurriculumDAO {
 
         $query = "
             SELECT
+                PEX.id,
                 PEX.person_experience_enterprise,
                 PEX.person_experience_office,
                 PEX.person_experience_activities,
@@ -273,7 +274,8 @@ class CurriculumDAO {
 
         $arrayExperiences = []; 
         foreach ($experiences as $experience) {
-            $arrayExperiences[$experience['person_experience_enterprise']] = [
+            $arrayExperiences[$experience['id']] = [
+                'enterprise' => $experience['person_experience_enterprise'],
                 'office' => $experience['person_experience_office'],
                 'init' => $experience['person_experience_activities'],
                 'finish' => $experience['person_experience_init'],
@@ -361,6 +363,125 @@ class CurriculumDAO {
         }
 
         return $list;
+    }
+
+    public function updateName(int $userID, int $curriculumID, string $name) {
+        $dbase = $this->database;
+
+        $field['cv_name'] = $name;
+        $field['updated'] = 'NOW()';
+
+        $where['id'] = $curriculumID;
+        $where['user_id'] = $userID;
+
+        if (!$dbase->update(self::TABLE_CV, $field, $where)) {
+            throw new SqlQueryException('Não foi possível atualizar o nome do currículo'); 
+        }
+    }
+
+    public function setOfficial(int $userID, int $curriculumID, int $oficial) {
+        self::unofficialCvs($userID);
+
+        $dbase = $this->database;
+        
+        $field['oficial'] = $oficial;
+        $field['updated'] = 'NOW()';
+
+        $where['id'] = $curriculumID;
+        $where['user_id'] = $userID;
+
+        $dbase->update(self::TABLE_CV, $field, $where);
+    }
+
+    public function updatePersonalInfo(int $curriculumID, array $fields) {
+        $dbase = $this->database;
+
+        $where['curriculum_id'] = $curriculumID;
+
+        $dbase->update(self::TABLE_PI, $fields, $where);
+    }
+
+    public function updatePersonalContact(int $curriculumID, array $fields) {
+        $dbase = $this->database;
+
+        $where['curriculum_id'] = $curriculumID;
+
+        $dbase->update(self::TABLE_PC, $fields, $where);
+    }
+
+    public function updatePersonalLangs(int $curriculumID, array $langs) {
+        self::deletePersonLangs($curriculumID);
+
+        $dbase = $this->database;
+
+        foreach ($langs as $lang) {
+            $arrayInsert = [];
+            $arrayInsert['curriculum_id'] = $curriculumID;
+            $arrayInsert['person_lang_name'] = $lang;
+
+            $dbase->insertWithArray(self::TABLE_PL, $arrayInsert);
+        }
+    }
+
+    public function updatePersonalSkills(int $curriculumID, array $skills) {
+        self::deletePersonSkills($curriculumID);
+
+        $dbase = $this->database;
+
+        foreach ($skills as $skill) {
+            $arrayInsert = [];
+            $arrayInsert['curriculum_id'] = $curriculumID;
+            $arrayInsert['person_skill_name'] = $skill;
+
+            $dbase->insertWithArray(self::TABLE_PS, $arrayInsert);
+        }
+    }
+
+    public function updatePersonEducation(int $curriculumID, array $fields) {
+        $dbase = $this->database;
+
+        foreach ($fields as $id => $info) {
+            $where = [];
+            $where['id'] = $id;
+            $where['curriculum_id'] = $curriculumID;
+
+            $dbase->update(self::TABLE_PE, $info, $where);
+        }
+    }
+
+    public function updatePersonExperiences(int $curriculumID, array $fields) {
+        $dbase = $this->database;
+
+        foreach ($fields as $id => $info) {
+            $where = [];
+            $where['id'] = $id;
+            $where['curriculum_id'] = $curriculumID;
+
+            $dbase->update(self::TABLE_PEX, $info, $where);
+        }
+    }
+
+    private function unofficialCvs(int $userID) {
+        $field['oficial'] = 0;
+
+        $where['oficial'] = 1;
+        $where['user_id'] = $userID;
+
+        $this->database->update(self::TABLE_CV, $field, $where);
+    }
+
+    private function deletePersonLangs(int $curriculumID) {
+        $where['curriculum_id'] = $curriculumID;
+        $limit = CurriculumModel::MAX_LANGS;
+        
+        $this->database->delete(self::TABLE_PL, $where, $limit);
+    }
+
+    private function deletePersonSkills(int $curriculumID) {
+        $where['curriculum_id'] = $curriculumID;
+        $limit = CurriculumModel::MAX_SKILLS;
+        
+        $this->database->delete(self::TABLE_PS, $where, $limit);
     }
 
 }
