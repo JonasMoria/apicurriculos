@@ -19,7 +19,6 @@ $app->get('/', AppController::class . ':getAboutApp');
 
 $app->group('/register', function() use ($app) {
    $app->post('/person', UserController::class . ':InsertNewUser');
-   $app->post('/enterprise', EnterpriseController::class . ':InsertNewEnterprise');
 });
 
 // Authentication

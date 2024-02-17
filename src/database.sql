@@ -17,19 +17,6 @@ CREATE TABLE users (
     PRIMARY KEY (id)
 );
 
--- Create table Enterprises
-DROP TABLE IF EXISTS `enterprises`;
-CREATE TABLE enterprises (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(256) NOT NULL,
-    email VARCHAR(256) NOT NULL UNIQUE,
-    pass VARCHAR(128) NOT NULL,
-    status TINYINT NOT NULL DEFAULT 1,
-    registered DATETIME NOT NULL DEFAULT NOW(),
-
-    PRIMARY KEY (id)
-);
-
 -- Create table curriculum
 DROP TABLE IF EXISTS `users_curriculum`;
 CREATE TABLE `users_curriculum` (
