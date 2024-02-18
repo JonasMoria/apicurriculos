@@ -17,8 +17,8 @@ $app = new \Slim\App(slimConfiguration());
 
 $app->get('/', AppController::class . ':getAboutApp');
 
-$app->group('/register', function() use ($app) {
-   $app->post('/person', UserController::class . ':InsertNewUser');
+$app->group('/perfil', function() use ($app) {
+   $app->post('/register', UserController::class . ':InsertNewUser');
 });
 
 // Authentication
@@ -48,14 +48,15 @@ $middlewareAuthPerson = function (Request $request, Response $response, $next) :
    }
 };
 
-// person routes with authentication
-$app->group('/person', function() use ($app) {
-   $app->post('/curriculum/new', CurriculumController::class . ':new');
+// Curriculum routes with authentication
+$app->group('/curriculum', function() use ($app) {
+   $app->post('/new', CurriculumController::class . ':new');
 
-   $app->get('/curriculum/list', CurriculumController::class . ':list');
-   $app->get('/curriculum/view/{id}', CurriculumController::class . ':view');
+   $app->get('/list', CurriculumController::class . ':list');
+   $app->get('/view/{id}', CurriculumController::class . ':view');
 
-   $app->put('/curriculum/update/{id}', CurriculumController::class . ':update');
+   $app->put('/update/{id}', CurriculumController::class . ':update');
+   $app->delete('/delete/{id}', CurriculumController::class . ':delete');
 
 })->add($middlewareAuthPerson);
 

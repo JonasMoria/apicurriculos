@@ -367,6 +367,12 @@ class CurriculumModel {
         }
     }
 
+    public function disable(int $userID, int $curriculumID) {
+        $dao = $this->DAO;
+
+        $dao->disableCurriculum($userID, $curriculumID);
+    }
+
     public function get(int $userID, int $curriculumID) {
         $dao = $this->DAO;
 

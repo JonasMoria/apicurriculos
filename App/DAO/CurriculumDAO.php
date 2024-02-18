@@ -340,7 +340,7 @@ class CurriculumDAO {
         return $langsArray;
     }
 
-    public function listUserCurriculum($userID) {
+    public function listUserCurriculum(int $userID) {
         $dbase = $this->database;
 
         $query = "
@@ -363,6 +363,18 @@ class CurriculumDAO {
         }
 
         return $list;
+    }
+
+    public function disableCurriculum(int $userID, int $curriculumID) {
+        $dbase = $this->database;
+
+        $fields['status'] = self::STATUS_DELETED;
+        $fields['updated'] = 'NOW()';
+
+        $where['id'] = $curriculumID;
+        $where['user_id'] = $userID;
+
+        $dbase->update(self::TABLE_CV, $fields, $where);
     }
 
     public function updateName(int $userID, int $curriculumID, string $name) {

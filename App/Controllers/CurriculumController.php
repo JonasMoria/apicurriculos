@@ -19,6 +19,32 @@ class CurriculumController {
         $this->model = new CurriculumModel();
     }
 
+    public function delete(Request $request, Response $response, array $args) : Response {
+        $curriculum = $this->model;
+        $params = $request->getParsedBody();
+        $userID = $_SESSION['user_id'];
+        $curriculumID = Security::filterInt($args['id']);
+
+        try {
+           if (empty($curriculumID)) {
+                throw new InvalidParamException('Currículo não identificado');
+           }
+
+           $curriculum->disable($userID, $curriculumID);
+
+           return Http::getJsonReponseSuccess($response, [], 'Currículo Deletado Com Sucesso', Http::OK);
+
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+    }
+
     public function update(Request $request, Response $response, array $args) : Response {
         $curriculum = $this->model;
         $params = $request->getParsedBody();
@@ -30,7 +56,7 @@ class CurriculumController {
                 throw new InvalidParamException('Não foram identificados dados a serem alterados');
             }
             if (empty($curriculumID)) {
-                throw new SqlQueryException('Currículo não identificado');
+                throw new InvalidParamException('Currículo não identificado');
             }
 
             $fieldsToUpdate = [];
