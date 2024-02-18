@@ -101,4 +101,12 @@ class UserDAO {
 
         return $dbase->fetchAssoc($query);
     }
+
+    public function updatePerfil(int $userID, array $fields) {
+        $dbase = $this->database;
+
+        $where['id'] = $userID;
+
+        return $dbase->update(self::TABLE, $fields, $where);
+    }
 }

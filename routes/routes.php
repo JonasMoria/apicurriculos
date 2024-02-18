@@ -17,6 +17,7 @@ $app = new \Slim\App(slimConfiguration());
 
 $app->get('/', AppController::class . ':getAboutApp');
 
+// Routes without authentication
 $app->group('/api', function() use ($app) {
    $app->post('/register', UserController::class . ':InsertNewUser');
 });
@@ -48,8 +49,11 @@ $middlewareAuthPerson = function (Request $request, Response $response, $next) :
    }
 };
 
+// Person routes with authentication
 $app->group('/perfil', function() use ($app){
     $app->get('/view', UserController::class . ':viewPerfil');
+    $app->put('/update', UserController::class . ':updatePerfil');
+
 })->add($middlewareAuthPerson);
 
 // Curriculum routes with authentication

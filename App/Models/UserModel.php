@@ -65,7 +65,7 @@ class UserModel {
         $user = $dao->getAuthUser($user, $pass512);
 
         if (!$user) {
-            throw new SqlQueryException('Usuário não cadastrado na plataforma.');
+            throw new SqlQueryException('Usuário não encontrado.');
         }
         if ($user['status'] == 0) {
             throw new SqlQueryException('Conta do usuário inativa, entre em contato com o suporte para mais informações.');
@@ -85,5 +85,31 @@ class UserModel {
         }
 
         return $userInfo;
+    }
+
+    public function updatePerfil(int $userID, array $fields) {
+        $dao = $this->DAO;
+
+        $updated = $dao->updatePerfil($userID, $fields);
+        if (empty($updated)) {
+            throw new SqlQueryException('Não foi possível alterar o perfil, por favor, tente novamente mais tarde');
+        }
+    }
+
+    public function makeArrayUpdatePerfil(array $perfil) {
+        $fieldsToUpdate = [];
+
+        if (!empty($perfil['user_name'])) {
+            $fieldsToUpdate['name'] = Security::sanitizeString($perfil['user_name']);
+        }
+        if (!empty($perfil['user_email'])) {
+            $fieldsToUpdate['email'] = Security::sanitizeEmail($perfil['user_email']);
+        }
+        if (!empty($perfil['user_password'])) {
+            Security::validatePass($perfil['user_password']);
+            $fieldsToUpdate['pass'] = Security::convertToSha512($perfil['user_password']);
+        }
+
+        return $fieldsToUpdate;
     }
 }
