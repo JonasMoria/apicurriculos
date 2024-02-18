@@ -41,4 +41,26 @@ class UserController {
             return Http::getJsonResponseErrorServer($response, $error);
         }
     }
+
+    public function viewPerfil(Request $request, Response $response, array $arg) : Response {
+        $user = $this->model;
+        $params = $request->getParsedBody();
+        $userID = $_SESSION['user_id'];
+
+        try {
+
+            $userData = $user->getPerfil($userID);
+
+            return Http::getJsonReponseSuccess($response, $userData, 'Sucesso', Http::OK);
+
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+    }
 }

@@ -77,4 +77,28 @@ class UserDAO {
 
         return $dbase->fetchAssoc($query);
     }
+
+    public function getUserPerfil(int $userID) {
+        $dbase = $this->database;
+
+        $query = "
+            SELECT
+                U.id,
+                U.name,
+                U.email,
+                U.registered,
+                count(UC.id) AS total_cvs
+            FROM
+                users U
+            INNER JOIN
+                users_curriculum UC
+                    ON UC.user_id = U.id
+                    AND UC.status = 1
+            WHERE
+                U.id = '" . $dbase->scapeString($userID) . "'
+            LIMIT 1
+        ";
+
+        return $dbase->fetchAssoc($query);
+    }
 }

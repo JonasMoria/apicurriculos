@@ -75,4 +75,15 @@ class UserModel {
 
         return true;
     }
+
+    public function getPerfil(int $userID) {
+        $dao = $this->DAO;
+
+        $userInfo = $dao->getUserPerfil($userID);
+        if (!$userInfo) {
+            throw new SqlQueryException('Não foi possível obter os dados, por favor, tente novamente mais tarde');
+        }
+
+        return $userInfo;
+    }
 }

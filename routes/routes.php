@@ -17,7 +17,7 @@ $app = new \Slim\App(slimConfiguration());
 
 $app->get('/', AppController::class . ':getAboutApp');
 
-$app->group('/perfil', function() use ($app) {
+$app->group('/api', function() use ($app) {
    $app->post('/register', UserController::class . ':InsertNewUser');
 });
 
@@ -47,6 +47,10 @@ $middlewareAuthPerson = function (Request $request, Response $response, $next) :
        return Http::getJsonResponseErrorServer($response, $error);
    }
 };
+
+$app->group('/perfil', function() use ($app){
+    $app->get('/view', UserController::class . ':viewPerfil');
+})->add($middlewareAuthPerson);
 
 // Curriculum routes with authentication
 $app->group('/curriculum', function() use ($app) {
