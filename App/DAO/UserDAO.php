@@ -11,6 +11,7 @@ use App\Exceptions\SqlQueryException;
 class UserDAO {
     private $database;
     const TABLE = 'users';
+    const STATUS_OFF = 0;
 
     public function __construct() {
         $this->database = new Database();
@@ -105,6 +106,15 @@ class UserDAO {
     public function updatePerfil(int $userID, array $fields) {
         $dbase = $this->database;
 
+        $where['id'] = $userID;
+
+        return $dbase->update(self::TABLE, $fields, $where);
+    }
+
+    public function disablePerfil(int $userID) {
+        $dbase = $this->database;
+
+        $fields['status'] = self::STATUS_OFF;
         $where['id'] = $userID;
 
         return $dbase->update(self::TABLE, $fields, $where);

@@ -18,6 +18,31 @@ class UserController {
         $this->model = new UserModel();
     }
 
+    public function disableAccount(Request $request, Response $response, array $arg) : Response {
+        $user = $this->model;
+        $params = $request->getParsedBody();
+        $userID = $_SESSION['user_id'];
+
+        try {
+            if (empty($userID)) {
+                throw new InvalidParamException('Usuário não identificado');
+            }
+
+            $user->disableAccount($userID);
+
+            return Http::getJsonReponseSuccess($response, [], 'Conta Desativada Com Sucesso', Http::CREATED);
+
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+    }
+
     public function updatePerfil(Request $request, Response $response, array $arg) : Response {
         $user = $this->model;
         $params = $request->getParsedBody();

@@ -96,6 +96,15 @@ class UserModel {
         }
     }
 
+    public function disableAccount(int $userID) {
+        $dao = $this->DAO;
+
+        $disabled = $dao->disablePerfil($userID);
+        if (empty($disabled)) {
+            throw new SqlQueryException('Não foi possível desativar a conta, por favor, tente novamente mais tarde');
+        }
+    }
+
     public function makeArrayUpdatePerfil(array $perfil) {
         $fieldsToUpdate = [];
 

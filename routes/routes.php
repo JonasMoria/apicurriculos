@@ -53,6 +53,7 @@ $middlewareAuthPerson = function (Request $request, Response $response, $next) :
 $app->group('/perfil', function() use ($app){
     $app->get('/view', UserController::class . ':viewPerfil');
     $app->put('/update', UserController::class . ':updatePerfil');
+    $app->delete('/delete', UserController::class . ':disableAccount');
 
 })->add($middlewareAuthPerson);
 
