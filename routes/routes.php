@@ -19,7 +19,8 @@ $app->get('/', AppController::class . ':getAboutApp');
 
 // Routes without authentication
 $app->group('/api', function() use ($app) {
-   $app->post('/register', UserController::class . ':InsertNewUser');
+   $app->post('/register', UserController::class . ':insertNewUser');
+   $app->get('/search', AppController::class . ':search');
 });
 
 // Authentication

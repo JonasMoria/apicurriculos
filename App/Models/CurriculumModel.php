@@ -146,7 +146,7 @@ class CurriculumModel {
                 throw new InvalidParamException('Máximo de ' . self::MAX_SKILLS . ' Habilidades já atingido. Cadastre outro currículo para as demais habilidades');
             }
 
-            $personSkills[$key] = Security::sanitizeString($skill);
+            $personSkills[$key] = Security::validateEmpty($skill, 'Habilidades');
             $count++;
         }
 
@@ -164,7 +164,7 @@ class CurriculumModel {
                 throw new InvalidParamException('Máximo de ' . self::MAX_LANGS . ' Linguagens já atingido. Cadastre outro currículo para as demais linguagens');
             }
 
-            $personLanguages[$key] = Security::sanitizeString($lang);
+            $personLanguages[$key] = Security::validateEmpty($lang, 'Linguagens');
             $count++;
         }
 

@@ -271,15 +271,15 @@ class CurriculumDAO {
         ";
 
         $experiences = $dbase->fetchAll($query);
-
+        
         $arrayExperiences = []; 
         foreach ($experiences as $experience) {
             $arrayExperiences[$experience['id']] = [
                 'enterprise' => $experience['person_experience_enterprise'],
                 'office' => $experience['person_experience_office'],
-                'init' => $experience['person_experience_activities'],
-                'finish' => $experience['person_experience_init'],
-                'activities' => $experience['person_experience_finish'],
+                'init' => $experience['person_experience_init'],
+                'finish' => $experience['person_experience_finish'],
+                'activities' => $experience['person_experience_activities'],
             ];
         }
 

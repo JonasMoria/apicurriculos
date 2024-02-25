@@ -73,7 +73,7 @@ class UserController {
         }
     }
 
-    public function InsertNewUser(Request $request, Response $response, array $arg) : Response {
+    public function insertNewUser(Request $request, Response $response, array $arg) : Response {
         $user = $this->model;
         $params = $request->getParsedBody();
 
