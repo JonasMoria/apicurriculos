@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Models\CurriculumModel;
 use App\Models\Http;
 use App\Models\Security;
-use Random\Engine\Secure;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,7 +20,6 @@ class CurriculumController {
 
     public function delete(Request $request, Response $response, array $args) : Response {
         $curriculum = $this->model;
-        $params = $request->getParsedBody();
         $userID = $_SESSION['user_id'];
         $curriculumID = Security::filterInt($args['id']);
 

@@ -20,13 +20,28 @@ class AppModel {
         self::validateParams($params);
         self::checkSizeRequest($params);
 
-
         return $dao->searchByParams($params);
+    }
+
+    public function view($id) {
+        $dao = $this->DAO;
+
+        $curriculum = [];
+
+        $curriculum['curriculum_name'] = $dao->getCurriculumName($id);
+        $curriculum['personal_info'] = $dao->getPersonalInfo($id);
+        $curriculum['personal_contact'] = $dao->getPersonalContact($id);
+        $curriculum['personal_education'] = $dao->getPersonalEducation($id);
+        $curriculum['personal_skills'] = $dao->getPersonalSkills($id);
+        $curriculum['personal_languages'] = $dao->getPersonalLangs($id);
+        $curriculum['personal_experience'] = $dao->getPersonalExperience($id);
+
+        return $curriculum;
     }
 
     public function validateParams(array $params) {
         $validParams = [
-            'person_cities' , 'person_uf', 'person_skills','person_langs',
+            'person_cities', 'person_uf', 'person_skills','person_langs',
             'education_acronym', 'education_modality', 'education_institution',
             'education_status', 'experience_enterprise', 'experience_office'
         ];
