@@ -4,11 +4,11 @@ API desenvolvida para servir de repositório de currículos. Tem como objetivo a
 ## Dependências:
 - Slim Framework v3.0
 - PHP 7.4 ou superior
-- firebase/php-jwt v6.10
+- tuupola/slim-jwt-auth
 
 ## Instruções:
 * As requisições são realizadas com base nos protocolos POST, PUT, GET, DELETE utilizando dados no formato JSON.
-* Utilizar o método de autenticação 'Basic Auth' para as rotas que requerem autenticação. Ao enviar os parâmetros de autenticação, a senha do usuário deve ser um hash SHA-512 da senha cadastrada.
+* Sistema de autenticação realizado via token JWT
   
 ### Cadastro de Perfil:
 | Requisição | URL | Detalhes |
@@ -26,6 +26,18 @@ API desenvolvida para servir de repositório de currículos. Tem como objetivo a
     "name" : "Nome Usuario Completo",
     "email" : "usuario@email.com",
     "password" : "Senha123"
+}
+```
+
+### Login
+| Requisição | URL | Detalhes |
+| --- | --- | --- |
+| POST | /api/login | -
+
+```yaml
+{
+    "email" : "usuario@email.com",
+    "pass":"senha_em_sha512"
 }
 ```
 

@@ -3,13 +3,12 @@
 use App\Controllers\AppController;
 use App\Controllers\CurriculumController;
 use App\Controllers\UserController;
-use Slim\Http\Request;
-use Slim\Http\Response;
 use App\Models\Http;
 use function src\slimConfiguration;
 use App\Models\Security;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Tuupola\Middleware\JwtAuthentication;
 
 session_start();
 
@@ -24,31 +23,23 @@ $app->group('/api', function() use ($app) {
 
 });
 
-// Authentication
-$middlewareAuthPerson = function (Request $request, Response $response, $next) : Response {
-    try {
-        $jwtToken = Security::filterJwtToken($request->getServerParam('HTTP_AUTHORIZATION'));
-        $data = JWT::decode($jwtToken, new Key(Security::getJwtkey(), 'HS256'));
-
-        AppController::createSession($data);
-
-        $response = $next($request, $response);
-
-        return $response;
-
-    } catch (Throwable $error) {
-        return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
-
-    }
-};
-
 // Person routes with authentication
 $app->group('/perfil', function() use ($app){
     $app->get('/view', UserController::class . ':viewPerfil');
     $app->put('/update', UserController::class . ':updatePerfil');
     $app->delete('/delete', UserController::class . ':disableAccount');
 
-})->add($middlewareAuthPerson);
+})->add(new JwtAuthentication([
+    'secret' => Security::getJwtkey(),
+    'before' => function($request) {
+        $jwtToken = Security::filterJwtToken($request->getServerParam('HTTP_AUTHORIZATION'));
+        $data = JWT::decode($jwtToken, new Key(Security::getJwtkey(), 'HS256'));
+        AppController::createSession($data);
+    },
+    'error' => function($response) {
+        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::BAD_REQUEST);
+    }
+]));
 
 // Curriculum routes with authentication
 $app->group('/curriculum', function() use ($app) {
@@ -58,6 +49,16 @@ $app->group('/curriculum', function() use ($app) {
     $app->put('/update/{id}', CurriculumController::class . ':update');
     $app->delete('/delete/{id}', CurriculumController::class . ':delete');
 
-})->add($middlewareAuthPerson);
+})->add(new JwtAuthentication([
+    'secret' => Security::getJwtkey(),
+    'before' => function($request) {
+        $jwtToken = Security::filterJwtToken($request->getServerParam('HTTP_AUTHORIZATION'));
+        $data = JWT::decode($jwtToken, new Key(Security::getJwtkey(), 'HS256'));
+        AppController::createSession($data);
+    },
+    'error' => function($response) {
+        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::BAD_REQUEST);
+    }
+]));
 
 $app->run();
