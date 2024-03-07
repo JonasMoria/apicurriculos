@@ -163,4 +163,12 @@ class Security {
     public static function convertDateToString(Datetime $date) {
         return date_format($date, 'Y-m-d');
     }
+
+    public static function getJwtkey() {
+        return getenv('JWT_KEY');
+    }
+
+    public static function filterJwtToken($serverToken) {
+        return (string) str_replace('Bearer ', '', $serverToken);
+    }
 }

@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use App\DAO\AppDAO;
+use App\DAO\UserDAO;
 use App\Exceptions\InvalidParamException;
+use App\Exceptions\SqlQueryException;
+use Firebase\JWT\JWT;
 
 class AppModel {
     private $DAO;
@@ -13,6 +16,32 @@ class AppModel {
     }
 
     const MAX_REQUEST_PARAMS = 3;
+
+    public function getJwtToken(string $user, string $password) {
+        $daoUser = new UserDAO();
+
+        $userData = $daoUser->getAuthUser($user, $password);
+        if (!$userData) {
+            throw new SqlQueryException('Acesso não autorizado', Http::UNAUTHORIZED);
+        }
+        if ($userData['status'] == 0) {
+            throw new SqlQueryException('Conta do usuário inativa, entre em contato com o suporte para mais informações.', Http::UNAUTHORIZED);
+        }
+
+        return $this->generateJwtToken($userData);
+    }
+
+    private function generateJwtToken(array $userData) {
+        $payload = [
+            'exp' => time() + 1000,
+            'iat' => time(),
+            'email' => $userData['email'],
+            'id' => $userData['id'],
+            'name' => $userData['name'],
+        ];
+
+        return JWT::encode($payload, Security::getJwtkey(), 'HS256');
+    }
 
     public function search(array $params) {
         $dao = $this->DAO;

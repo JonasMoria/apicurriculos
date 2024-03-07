@@ -18,6 +18,39 @@ class AppController {
         $this->model = new AppModel();
     }
 
+    public function login(Request $request, Response $response, array $args) : Response {
+        $app = $this->model;
+        $params = $request->getParsedBody();
+
+        try {
+            if (empty($params)) {
+                throw new SqlQueryException('Acesso não autorizado', Http::UNAUTHORIZED);
+            }
+
+            $user = Security::validateEmail($params['email']);
+            $password = $params['pass'];
+            $token = $app->getJwtToken($user, $password);
+
+            return Http::getJsonReponseSuccess($response, [$token], 'Sucesso', Http::OK);
+
+        } catch (InvalidParamException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), $error->getCode());
+
+        } catch (SqlQueryException $error) {
+            return Http::getJsonReponseError($response, $error->getMessage(), $error->getCode());
+
+        } catch (\Exception $error) {
+            return Http::getJsonResponseErrorServer($response, $error);
+        }
+
+    }
+
+    public static function createSession($jwtData) {
+        $_SESSION['user_id'] = $jwtData->id;
+        $_SESSION['user_name'] = $jwtData->name;
+        $_SESSION['user_email'] = $jwtData->email;
+    }
+
     public function search(Request $request, Response $response, array $args) : Response {
         $app = $this->model;
         $params = $request->getParsedBody();

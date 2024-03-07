@@ -56,26 +56,6 @@ class UserModel {
         }
     }
 
-    private static function setSession($userID) {
-        $_SESSION['user_id'] = $userID;
-    }
-
-    public function personAuth(string $user, string $pass512) {
-        $dao = $this->DAO;
-        $user = $dao->getAuthUser($user, $pass512);
-
-        if (!$user) {
-            throw new SqlQueryException('Usuário não encontrado.');
-        }
-        if ($user['status'] == 0) {
-            throw new SqlQueryException('Conta do usuário inativa, entre em contato com o suporte para mais informações.');
-        }
-
-        self::setSession($user['id']);
-
-        return true;
-    }
-
     public function getPerfil(int $userID) {
         $dao = $this->DAO;
 

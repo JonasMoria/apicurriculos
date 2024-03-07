@@ -4,6 +4,7 @@ API desenvolvida para servir de repositório de currículos. Tem como objetivo a
 ## Dependências:
 - Slim Framework v3.0
 - PHP 7.4 ou superior
+- firebase/php-jwt v6.10
 
 ## Instruções:
 * As requisições são realizadas com base nos protocolos POST, PUT, GET, DELETE utilizando dados no formato JSON.

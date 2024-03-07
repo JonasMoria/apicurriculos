@@ -65,8 +65,8 @@ class UserDAO {
         $query = "
             SELECT
                 U.id,
+                U.name,
                 U.email,
-                U.pass,
                 U.status
             FROM
                 " . self::TABLE . " U

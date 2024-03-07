@@ -17,3 +17,4 @@ putenv('DB_USER=' . USER);
 putenv('DB_PASS=' . PASS);
 putenv('DB_PORT=' . PORT);
 
+putenv('JWT_KEY=' . '16d30fa8ea8f78555e30572d5a268f3e');
