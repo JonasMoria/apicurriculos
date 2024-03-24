@@ -18,7 +18,7 @@ $app = new \Slim\App(slimConfiguration());
 $app->group('/api', function() use ($app) {
     $app->post('/login', AppController::class . ':login');
     $app->post('/register', UserController::class . ':insertNewUser');
-    $app->get('/search', AppController::class . ':search');
+    $app->post('/search', AppController::class . ':search');
     $app->get('/view/{id}', AppController::class . ':view');
 
 });

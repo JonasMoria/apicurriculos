@@ -46,10 +46,8 @@ class AppModel {
     public function search(array $params) {
         $dao = $this->DAO;
 
-        self::validateParams($params);
-        self::checkSizeRequest($params);
-
-        return $dao->searchByParams($params);
+        $filteredParams = self::validateParams($params);
+        return $dao->searchByParams($filteredParams);
     }
 
     public function view($id) {
@@ -75,24 +73,20 @@ class AppModel {
             'education_status', 'experience_enterprise', 'experience_office'
         ];
 
-        foreach ($params as $param => $value) {
+        foreach ($params as $param => $values) {
             if (!in_array($param, $validParams)) {
                 throw new InvalidParamException('Parâmetro "' . $param . '" inválido. Verifique-o e tente novamente');
             }
-        }
-    }
 
-    /**
-     * Checks the size of search fields, raises an exception if it exceeds the allowed limit
-     * 
-     * @param array $params Fields to search
-     * @return void
-     */
-    public static function checkSizeRequest(array $params) {
-        foreach ($params as $param => $values) {
-            if (count($values) > self::MAX_REQUEST_PARAMS) {
-                throw new InvalidParamException('Campo "' . $param . '" excede o limite de ' . self::MAX_REQUEST_PARAMS . ' parâmetros. Verifique-os e tente novamente');
+            if (empty($values)) {
+                unset($params[$param]);
+            } else {
+                if (count($values) > self::MAX_REQUEST_PARAMS) {
+                    throw new InvalidParamException('Campo "' . $param . '" excede o limite de ' . self::MAX_REQUEST_PARAMS . ' parâmetros. Verifique-os e tente novamente');
+                }
             }
         }
+
+        return $params;
     }
 }
