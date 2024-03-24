@@ -249,7 +249,7 @@ API desenvolvida para servir de repositório de currículos. Tem como objetivo a
 ### Mecanismo de Pesquisa de Currículos:
 | Requisição | URL | Detalhes |
 | --- | --- | --- |
-| GET | /api/search | Envie apenas os parâmetros em que deseja filtrar na busca
+| POST | /api/search | Envie apenas os parâmetros que deseja filtrar na busca
 
 ```yaml
 {
