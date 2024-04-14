@@ -87,10 +87,10 @@ class UserController {
             return Http::getJsonReponseSuccess($response, [], 'Usuário Cadastrado Com Sucesso', Http::CREATED);
 
         } catch (InvalidParamException $error) {
-            return Http::getJsonReponseError($response, $error->getMessage(), Http::BAD_REQUEST);
+            return Http::getJsonReponseError($response, $error->getMessage(), $error->getCode());
 
         } catch (SqlQueryException $error) {
-            return Http::getJsonReponseError($response, $error->getMessage(), Http::NOT_FOUND);
+            return Http::getJsonReponseError($response, $error->getMessage(),  $error->getCode());
 
         } catch (\Exception $error) {
             return Http::getJsonResponseErrorServer($response, $error);

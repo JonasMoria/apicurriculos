@@ -26,7 +26,7 @@ class UserDAO {
         $pass = Security::convertToSha512($pass);
 
         if (self::getUserByEmail($email)) {
-            throw new SqlQueryException('Usuário já cadastrado');
+            throw new SqlQueryException('Usuário já cadastrado', 400);
         }
 
         $query = "

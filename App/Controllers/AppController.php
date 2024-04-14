@@ -28,7 +28,7 @@ class AppController {
             }
 
             $user = Security::validateEmail($params['email']);
-            $password = $params['pass'];
+            $password = Security::convertToSha512($params['pass']);
             $token = $app->getJwtToken($user, $password);
 
             return Http::getJsonReponseSuccess($response, [$token], 'Sucesso', Http::OK);

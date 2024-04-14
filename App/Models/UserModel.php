@@ -52,7 +52,7 @@ class UserModel {
         $dao = $this->DAO;
 
         if (!$dao->executeInsert($user)) {
-            throw new SqlQueryException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde');
+            throw new SqlQueryException('Não foi possível realizar o cadastro, por favor, tente novamente mais tarde', 500);
         }
     }
 

@@ -22,7 +22,7 @@ class AppModel {
 
         $userData = $daoUser->getAuthUser($user, $password);
         if (!$userData) {
-            throw new SqlQueryException('Acesso não autorizado', Http::UNAUTHORIZED);
+            throw new SqlQueryException('Usuário ou senha incorretos', Http::UNAUTHORIZED);
         }
         if ($userData['status'] == 0) {
             throw new SqlQueryException('Conta do usuário inativa, entre em contato com o suporte para mais informações.', Http::UNAUTHORIZED);

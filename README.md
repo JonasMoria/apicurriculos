@@ -37,7 +37,7 @@ API desenvolvida para servir de repositório de currículos. Tem como objetivo a
 ```yaml
 {
     "email" : "usuario@email.com",
-    "pass":"senha_em_sha512"
+    "pass":"senha_forte"
 }
 ```
 
