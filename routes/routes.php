@@ -37,7 +37,7 @@ $app->group('/perfil', function() use ($app){
         AppController::createSession($data);
     },
     'error' => function($response) {
-        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::BAD_REQUEST);
+        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::UNAUTHORIZED);
     }
 ]));
 
@@ -57,7 +57,7 @@ $app->group('/curriculum', function() use ($app) {
         AppController::createSession($data);
     },
     'error' => function($response) {
-        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::BAD_REQUEST);
+        return Http::getJsonReponseError($response, 'Acesso não autorizado', Http::UNAUTHORIZED);
     }
 ]));
 

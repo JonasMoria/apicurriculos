@@ -91,7 +91,7 @@ class UserDAO {
                 count(UC.id) AS total_cvs
             FROM
                 users U
-            INNER JOIN
+            LEFT JOIN
                 users_curriculum UC
                     ON UC.user_id = U.id
                     AND UC.status = 1

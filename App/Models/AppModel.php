@@ -33,7 +33,7 @@ class AppModel {
 
     private function generateJwtToken(array $userData) {
         $payload = [
-            'exp' => time() + 1000,
+            'exp' => time() + 86400000,
             'iat' => time(),
             'email' => $userData['email'],
             'id' => $userData['id'],

@@ -57,6 +57,9 @@ class UserController {
             }
 
             $fieldsToUpdate = $user->makeArrayUpdatePerfil($params);
+            if (!$fieldsToUpdate) {
+                return Http::getJsonReponseError($response, 'Não foram encontrados dados a serem atualizados.', Http::BAD_REQUEST);
+            }
 
             $user->updatePerfil($userID, $fieldsToUpdate);
 
